@@ -50,7 +50,7 @@ services:
     icon: "fas fa-cloud"
     items:
       - name: "Prowlarr"
-        logo: "/prowlarr/Content/Images/logo.png"
+        logo: "/prowlarr/favicon.ico"
         subtitle: "Prowlarr indexeur"
         tag: "prowlarr"
         tagstyle: "is-primary"
@@ -58,7 +58,7 @@ services:
         target: "_blank"
 
       - name: "Radarr"
-        logo: "/radarr/Content/Images/logo.png"
+        logo: "/radarr/favicon.ico"
         subtitle: "Radarr"
         tag: "Radarr"
         tagstyle: "is-primary"
@@ -66,7 +66,7 @@ services:
         target: "_blank"
 
       - name: "Sonarr"
-        logo: "/sonarr/Content/Images/logo.svg"
+        logo: "/sonarr/favicon.ico"
         subtitle: "Sonarr"
         tag: "Sonarr"
         tagstyle: "is-primary"
@@ -74,7 +74,7 @@ services:
         target: "_blank"
 
       - name: "Lidarr"
-        logo: "/lidarr/Content/Images/logo.svg"
+        logo: "/lidarr/favicon.ico"
         subtitle: "Lidarr"
         tag: "Lidarr"
         tagstyle: "is-primary"
@@ -82,7 +82,7 @@ services:
         target: "_blank"
 
       - name: "Readarr"
-        logo: "/readarr/Content/Images/logo.svg"
+        logo: "/readarr/favicon.ico"
         subtitle: "Readarr"
         tag: "Readarr"
         tagstyle: "is-primary"
