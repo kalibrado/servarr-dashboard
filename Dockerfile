@@ -1,25 +1,25 @@
 FROM debian
 
 ENV TRANSMISSION_DOWNLOADS_PATH="/media/downloads"
-ENV SERVARR_APP = "/srv"
-ENV LOGS_PATH = "/var/log"
+ENV SERVARR_APP="/srv"
+ENV LOGS_PATH="/var/log"
 
 # Disable Prompt During Packages Installation
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt-get install  --no-install-recommends -y \
-      curl \
-      nano \
-      wget \
-      nginx \
-      sqlite3 \
-      mediainfo \
-      libchromaprint-tools \
-      nginx-extras \
-      supervisor \ 
-      procps \
-      ca-certificates \
-      transmission-daemon
+curl \
+nano \
+wget \
+nginx \
+sqlite3 \
+mediainfo \
+libchromaprint-tools \
+nginx-extras \
+supervisor \ 
+procps \
+ca-certificates \
+transmission-daemon
 
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt clean
