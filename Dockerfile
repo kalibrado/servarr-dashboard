@@ -5,7 +5,6 @@ ENV SERVARR_APP="/srv"
 ENV LOGS_PATH="/var/log"
 ENV SERVARR_THEME="dark"
 
-# Disable Prompt During Packages Installation
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt-get install  --no-install-recommends -y \
