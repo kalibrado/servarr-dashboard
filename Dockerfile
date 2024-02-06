@@ -24,27 +24,27 @@ RUN apt update && apt-get install  --no-install-recommends -y \
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt clean
 
-# Copy the Nginx config
-COPY install.sh /install.sh
-RUN chmod +x /install.sh
-RUN bash /install.sh
-
 RUN mkdir -p ${TRANSMISSION_DOWNLOADS_PATH}
 RUN mkdir -p ${TRANSMISSION_DOWNLOADS_PATH}/completed
 RUN mkdir -p ${TRANSMISSION_DOWNLOADS_PATH}/incompleted
+RUN mkdir -p ${SERVARR_APP}/Homer
+
+
+COPY install.sh /install.sh
+RUN chmod +x /install.sh
+RUN env && sleep 20s
+RUN bash /install.sh
 
 RUN chown -R www-data:www-data /var/www/html
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** ${SERVARR_APP}/Homer/assets
-
 COPY transmission/** /etc/transmission-daemon/
 
-VOLUME [ "~/.config/", ${SERVARR_APP}, "/etc/nginx", "/usr/share/nginx/html" ]
-
-# Expose Port for the Application 
+VOLUME [ "~/.config/", ${SERVARR_APP}, ${TRANSMISSION_DOWNLOADS_PATH}, "/etc/nginx", "/usr/share/nginx/html" ]
+ 
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
-# Run the Nginx server
+ 
 CMD ["/usr/bin/supervisord"]

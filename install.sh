@@ -23,7 +23,7 @@ function Readar() {
       echo "Remove Readarr*.linux*.tar.gz"
       rm Readarr*.linux*.tar.gz
       $SERVARR_APP/Readarr/Readarr -nobrowser &
-      sleep 10s
+      sleep 20s
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/readarr</UrlBase>|g' ~/.config/Readar/config.xml
       pkill -f $SERVARR_APP/Readarr
 }
@@ -40,7 +40,7 @@ function Radarr() {
       echo "Remove Radarr*.linux*.tar.gz"
       rm Radarr*.linux*.tar.gz
       $SERVARR_APP/Radarr/Radarr -nobrowser &
-      sleep 10s
+      sleep 20s
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/radarr</UrlBase>|g' ~/.config/Radarr/config.xml
       pkill -f $SERVARR_APP/Radarr
       wait
@@ -58,7 +58,7 @@ function Sonarr() {
       echo "Remove Sonarr*.linux*.tar.gz"
       rm Sonarr*.linux*.tar.gz
       $SERVARR_APP/Sonarr/Sonarr -nobrowser &
-      sleep 10s
+      sleep 20s
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/sonarr</UrlBase>|g' ~/.config/Sonarr/config.xml
       pkill -f $SERVARR_APP/Sonarr
 }
@@ -75,7 +75,7 @@ function Lidarr() {
       echo "Remove Lidarr*.linux*.tar.gz"
       rm Lidarr*.linux*.tar.gz
       $SERVARR_APP/Lidarr/Lidarr -nobrowser &
-      sleep 10s
+      sleep 20s
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/lidarr</UrlBase>|g' ~/.config/Lidarr/config.xml
       pkill -f $SERVARR_APP/Lidarr
 }
@@ -92,7 +92,7 @@ function Prowlarr() {
       echo "Remove Prowlarr*.linux*.tar.gz"
       rm Prowlarr*.linux*.tar.gz
       $SERVARR_APP/Prowlarr/Prowlarr -nobrowser &
-      sleep 10s
+      sleep 20s
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/prowlarr</UrlBase>|g' ~/.config/Prowlarr/config.xml
       pkill -f $SERVARR_APP/Prowlarr
 
