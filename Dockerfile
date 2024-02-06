@@ -13,6 +13,7 @@ RUN apt update && apt-get install  --no-install-recommends -y \
       libchromaprint-tools \
       nginx-extras \
       supervisor \ 
+      procps \
       ca-certificates
 
 RUN rm -rf /var/lib/apt/lists/*
@@ -28,10 +29,7 @@ RUN chown -R www-data:www-data /var/www/html
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-VOLUME /usr/share/nginx/html
-VOLUME /etc/nginx
-VOLUME /opt/
-VOLUME ~/.config
+VOLUME [ "~/.config/", "/opt", "/etc/nginx", "/usr/share/nginx/html" ]
 
 # Expose Port for the Application 
 EXPOSE 80/tcp
