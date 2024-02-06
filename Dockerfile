@@ -19,7 +19,8 @@ nginx-extras \
 supervisor \ 
 procps \
 ca-certificates \
-transmission-daemon
+transmission-daemon \
+unzip
 
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt clean
