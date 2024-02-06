@@ -16,9 +16,9 @@ function Readar() {
       chown readarr:readarr -R /opt/Readarr
       echo "Remove Readarr*.linux*.tar.gz"
       rm Readarr*.linux*.tar.gz
-      /opt/Readarr -nobrowser &
+      /opt/Readarr/Readarr -nobrowser &
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/readarr</UrlBase>|g' ~/.config/Readar/config.xml
-      pkill -f /opt/Readarr 
+      pkill -f /opt/Readarr
 }
 
 function Radarr() {
@@ -32,9 +32,10 @@ function Radarr() {
       chown radarr:radarr -R /opt/Radarr
       echo "Remove Radarr*.linux*.tar.gz"
       rm Radarr*.linux*.tar.gz
-      /opt/Radarr -nobrowser &
+      /opt/Radarr/Radarr -nobrowser &
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/radarr</UrlBase>|g' ~/.config/Radarr/config.xml
       pkill -f /opt/Radarr
+      wait
 }
 
 function Sonarr() {
@@ -48,7 +49,7 @@ function Sonarr() {
       chown -R root:media /opt/Sonarr
       echo "Remove Sonarr*.linux*.tar.gz"
       rm Sonarr*.linux*.tar.gz
-      /opt/Sonarr -nobrowser &
+      /opt/Sonarr/Sonarr -nobrowser &
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/sonarr</UrlBase>|g' ~/.config/Sonarr/config.xml
       pkill -f /opt/Sonarr
 }
@@ -64,7 +65,7 @@ function Lidarr() {
       chown -R root:media /opt/Lidarr
       echo "Remove Lidarr*.linux*.tar.gz"
       rm Lidarr*.linux*.tar.gz
-      /opt/Lidarr -nobrowser &
+      /opt/Lidarr/Lidarr -nobrowser &
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/lidarr</UrlBase>|g' ~/.config/Lidarr/config.xml
       pkill -f /opt/Lidarr
 }
@@ -80,7 +81,7 @@ function Prowlarr() {
       chown prowlarr:prowlarr -R /opt/Prowlarr
       echo "Remove Prowlarr*.linux*.tar.gz"
       rm Prowlarr*.linux*.tar.gz
-      /opt/Prowlarr -nobrowser &
+      /opt/Prowlarr/Prowlarr -nobrowser &
       sed -i 's|<UrlBase></UrlBase>|<UrlBase>/prowlarr</UrlBase>|g' ~/.config/Prowlarr/config.xml
       pkill -f /opt/Prowlarr
 
