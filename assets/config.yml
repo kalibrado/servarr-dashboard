@@ -1,10 +1,9 @@
 ---
 title: "Servarr dashbord"
-subtitle: "Servarr"
-logo: "logo.png"
+logo: "/assets/servarr.png"
 
-header: false
-footer: '<p>Created By kalibrado <span class="has-text-danger">❤️</span> // Fork me on <a href="https://github.com/kalibrado/servarr-all-in-one"><i class="fab fa-github-alt"></i></a></p>' 
+header: true
+footer: '<p>Created By kalibrado <span class="has-text-danger">❤️</span> // Fork me on <a href="https://github.com/kalibrado/servarr-all-in-one" target="_blank"><i class="fab fa-github-alt"></i></a></p>' 
 
 stylesheet:
   - "assets/custom.css"
@@ -50,49 +49,31 @@ services:
     icon: "fas fa-cloud"
     items:
       - name: "Prowlarr"
-        logo: "/prowlarr/favicon.ico"
-        subtitle: "Prowlarr indexeur"
-        tag: "prowlarr"
-        tagstyle: "is-primary"
+        logo: "/assets/prowlarr.png"
         url: "/prowlarr"
         target: "_blank"
 
       - name: "Radarr"
-        logo: "/radarr/favicon.ico"
-        subtitle: "Radarr"
-        tag: "Radarr"
-        tagstyle: "is-primary"
+        logo: "/assets/radarr.png"
         url: "/radarr"
         target: "_blank"
 
       - name: "Sonarr"
-        logo: "/sonarr/favicon.ico"
-        subtitle: "Sonarr"
-        tag: "Sonarr"
-        tagstyle: "is-primary"
+        logo: "/assets/sonarr.png"
         url: "/sonarr"
         target: "_blank"
 
       - name: "Lidarr"
-        logo: "/lidarr/favicon.ico"
-        subtitle: "Lidarr"
-        tag: "Lidarr"
-        tagstyle: "is-primary"
+        logo: "/assets/lidarr.png"
         url: "/lidarr"
         target: "_blank"
 
       - name: "Readarr"
-        logo: "/readarr/favicon.ico"
-        subtitle: "Readarr"
-        tag: "Readarr"
-        tagstyle: "is-primary"
+        logo: "/assets/readarr.png"
         url: "/readarr"
         target: "_blank"
 
       - name: "Transmission"
-        logo: "/transmission/web/images/favicon.png"
-        subtitle: "Transmission"
-        tag: "Transmission"
-        tagstyle: "is-primary"
+        logo: "/assets/transmission.png"
         url: "/transmission"
         target: "_blank"

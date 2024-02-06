@@ -47,6 +47,7 @@ RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** $SERVARR_APP/Homer/assets
+COPY assets/servarr.png $SERVARR_APP/Homer/assets/icons/favicon.ico
 
 VOLUME [ "/.config/", $SERVARR_APP, $TRANSMISSION_DOWNLOADS_PATH, "/etc/nginx"]
  
