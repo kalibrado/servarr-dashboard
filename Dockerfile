@@ -36,7 +36,7 @@ RUN bash /install.sh
 
 RUN chown -R www-data:www-data /var/www/html
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** ${SERVARR_APP}/Homer/assets
 COPY transmission/** /etc/transmission-daemon/
