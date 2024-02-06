@@ -32,7 +32,6 @@ RUN mkdir -p ${SERVARR_APP}/Homer
 
 COPY install.sh /install.sh
 RUN chmod +x /install.sh
-RUN env && sleep 20s
 RUN bash /install.sh
 
 RUN chown -R www-data:www-data /var/www/html

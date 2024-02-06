@@ -103,5 +103,6 @@ Readar &
 Radarr &
 Sonarr &
 Lidarr &
+Homer &
 
 wait
