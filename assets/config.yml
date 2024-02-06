@@ -1,0 +1,96 @@
+---
+title: "Servarr dashbord"
+subtitle: "Servarr"
+logo: "logo.png"
+
+header: false
+footer: '<p>Created By kalibrado <span class="has-text-danger">❤️</span> // Fork me on <a href="https://github.com/kalibrado/servarr-all-in-one"><i class="fab fa-github-alt"></i></a></p>' 
+
+stylesheet:
+  - "assets/custom.css"
+
+columns: "3"
+theme: default
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#f5f5f5"
+    card-background: "#ffffff"
+    text: "#363636"
+    text-header: "#ffffff"
+    text-title: "#303030"
+    text-subtitle: "#424242"
+    card-shadow: rgba(0, 0, 0, 0.1)
+    link: "#3273dc"
+    link-hover: "#363636"
+  dark:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#131313"
+    card-background: "#2b2b2b"
+    text: "#eaeaea"
+    text-header: "#ffffff"
+    text-title: "#fafafa"
+    text-subtitle: "#f5f5f5"
+    card-shadow: rgba(0, 0, 0, 0.4)
+    link: "#3273dc"
+    link-hover: "#ffdd57"
+
+message:
+
+links: []
+
+services:
+  - name: "Applications"
+    icon: "fas fa-cloud"
+    items:
+      - name: "Prowlarr"
+        logo: "/prowlarr/Content/Images/logo.png"
+        subtitle: "Prowlarr indexeur"
+        tag: "prowlarr"
+        tagstyle: "is-primary"
+        url: "/prowlarr"
+        target: "_blank"
+
+      - name: "Radarr"
+        logo: "/radarr/Content/Images/logo.png"
+        subtitle: "Radarr"
+        tag: "Radarr"
+        tagstyle: "is-primary"
+        url: "/radarr"
+        target: "_blank"
+
+      - name: "Sonarr"
+        logo: "/sonarr/Content/Images/logo.svg"
+        subtitle: "Sonarr"
+        tag: "Sonarr"
+        tagstyle: "is-primary"
+        url: "/sonarr"
+        target: "_blank"
+
+      - name: "Lidarr"
+        logo: "/lidarr/Content/Images/logo.svg"
+        subtitle: "Lidarr"
+        tag: "Lidarr"
+        tagstyle: "is-primary"
+        url: "/lidarr"
+        target: "_blank"
+
+      - name: "Readarr"
+        logo: "/readarr/Content/Images/logo.svg"
+        subtitle: "Readarr"
+        tag: "Readarr"
+        tagstyle: "is-primary"
+        url: "/readarr"
+        target: "_blank"
+
+      - name: "Transmission"
+        logo: "/transmission/web/images/favicon.png"
+        subtitle: "Transmission"
+        tag: "Transmission"
+        tagstyle: "is-primary"
+        url: "/transmission"
+        target: "_blank"
