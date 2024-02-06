@@ -25,6 +25,7 @@ colors:
     card-shadow: rgba(0, 0, 0, 0.1)
     link: "#3273dc"
     link-hover: "#363636"
+    background-image: "../assets/wallpaper-light.jpeg"
   dark:
     highlight-primary: "#3367d6"
     highlight-secondary: "#4285f4"
@@ -38,6 +39,7 @@ colors:
     card-shadow: rgba(0, 0, 0, 0.4)
     link: "#3273dc"
     link-hover: "#ffdd57"
+    background-image: "../assets/wallpaper.jpeg"
 
 message:
 

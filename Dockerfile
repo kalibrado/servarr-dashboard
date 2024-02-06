@@ -23,12 +23,11 @@ transmission-daemon
 
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt clean
+RUN apt autoremove -y
 
-RUN mkdir -p ${TRANSMISSION_DOWNLOADS_PATH}
-RUN mkdir -p ${TRANSMISSION_DOWNLOADS_PATH}/completed
-RUN mkdir -p ${TRANSMISSION_DOWNLOADS_PATH}/incompleted
-RUN mkdir -p ${SERVARR_APP}/Homer
-
+RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
+RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
+RUN mkdir -p "$SERVARR_APP/Homer"
 
 COPY install.sh /install.sh
 RUN chmod +x /install.sh
@@ -37,10 +36,13 @@ RUN bash /install.sh
 RUN chown -R www-data:www-data /var/www/html
 
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN sed -i 's|_SERVARR_APP_|${SERVARR_APP}/Homer|g' /etc/nginx/nginx.conf
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY assets/** ${SERVARR_APP}/Homer/assets
+RUN sed -i "s|_SERVARR_APP_|$SERVARR_APP/Homer|g" /etc/nginx/nginx.conf
 COPY transmission/** /etc/transmission-daemon/
+RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_COMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/completed|g" /etc/transmission-daemon/settings.json
+RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/incompleted|g" /etc/transmission-daemon/settings.json
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY assets/** $SERVARR_APP/Homer/assets
 
 VOLUME [ "~/.config/", ${SERVARR_APP}, ${TRANSMISSION_DOWNLOADS_PATH}, "/etc/nginx", "/usr/share/nginx/html" ]
  
