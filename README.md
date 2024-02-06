@@ -4,9 +4,9 @@
 
 
 
-git clone https://github.com/kalibrado/servarr-dashbrod.git
+git clone https://github.com/kalibrado/servarr-dashboard.git
 
-cd servarr-dashbrod
+cd servarr-dashboard
 
 docker build -t servarr .
 
