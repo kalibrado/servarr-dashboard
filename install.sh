@@ -2,8 +2,9 @@
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root."
-    exit
+    exit 1
 fi
+
 function Config() {
     echo "Update syteme ..."
     apt-get -qq update 
@@ -21,9 +22,8 @@ function Config() {
     mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
     echo "Create Workspace $SERVARR_APP"
     mkdir -p "$SERVARR_APP"
-
+    return 
 }
-
 
 function Homer() {
     echo "Download Homer ..."
@@ -36,6 +36,7 @@ function Homer() {
     cp ./assets/** $SERVARR_APP/Homer/assets
     echo "Edit favicon Homer"
     cp ./assets/logo.png $SERVARR_APP/Homer/assets/icons/favicon.ico
+    return 
 }
 
 function Readar() {
@@ -49,11 +50,13 @@ function Readar() {
     chown readarr:readarr -R $SERVARR_APP/Readarr
     echo "Remove Readarr*.linux*.tar.gz"
     rm Readarr*.linux*.tar.gz
-    $SERVARR_APP/Readarr/Readarr -nobrowser >/dev/null 2>&1 &
+    $SERVARR_APP/Readarr/Readarr -nobrowser &
+    sleep 5s
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/readarr</UrlBase>|g' ~/.config/Readarr/config.xml
     sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Readarr/config.xml
     sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Readarr/config.xml
     pkill -f $SERVARR_APP/Readarr
+    return
 }
 
 function Radarr() {
@@ -67,12 +70,13 @@ function Radarr() {
     chown radarr:radarr -R $SERVARR_APP/Radarr
     echo "Remove Radarr*.linux*.tar.gz"
     rm Radarr*.linux*.tar.gz
-    $SERVARR_APP/Radarr/Radarr -nobrowser >/dev/null 2>&1 &
+    $SERVARR_APP/Radarr/Radarr -nobrowser &
+    sleep 5s
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/radarr</UrlBase>|g' ~/.config/Radarr/config.xml
     sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Radarr/config.xml
     sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Radarr/config.xml
     pkill -f $SERVARR_APP/Radarr
-    wait
+    return
 }
 
 function Sonarr() {
@@ -86,11 +90,13 @@ function Sonarr() {
     chown -R root:media $SERVARR_APP/Sonarr
     echo "Remove Sonarr*.linux*.tar.gz"
     rm Sonarr*.linux*.tar.gz
-    $SERVARR_APP/Sonarr/Sonarr -nobrowser >/dev/null 2>&1 &
+    $SERVARR_APP/Sonarr/Sonarr -nobrowser &
+    sleep 5s
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/sonarr</UrlBase>|g' ~/.config/Sonarr/config.xml
     sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Sonarr/config.xml
     sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Sonarr/config.xml
     pkill -f $SERVARR_APP/Sonarr
+    return
 }
 
 function Lidarr() {
@@ -104,11 +110,13 @@ function Lidarr() {
     chown -R root:media $SERVARR_APP/Lidarr
     echo "Remove Lidarr*.linux*.tar.gz"
     rm Lidarr*.linux*.tar.gz
-    $SERVARR_APP/Lidarr/Lidarr -nobrowser >/dev/null 2>&1 &
+    $SERVARR_APP/Lidarr/Lidarr -nobrowser &
+    sleep 5s
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/lidarr</UrlBase>|g' ~/.config/Lidarr/config.xml
     sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Lidarr/config.xml
     sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Lidarr/config.xml
     pkill -f $SERVARR_APP/Lidarr
+    return
 }
 
 function Prowlarr() {
@@ -122,15 +130,17 @@ function Prowlarr() {
     chown prowlarr:prowlarr -R $SERVARR_APP/Prowlarr
     echo "Remove Prowlarr*.linux*.tar.gz"
     rm Prowlarr*.linux*.tar.gz
-    $SERVARR_APP/Prowlarr/Prowlarr -nobrowser >/dev/null 2>&1 &
+    $SERVARR_APP/Prowlarr/Prowlarr -nobrowser &
+    sleep 5s
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/prowlarr</UrlBase>|g' ~/.config/Prowlarr/config.xml
     sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Prowlarr/config.xml
     sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Prowlarr/config.xml
     pkill -f $SERVARR_APP/Prowlarr
-    
+    return
 }
 
-Config
+Config &
+wait
 
 # Run in background for best performance
 Prowlarr &
@@ -139,7 +149,6 @@ Radarr &
 Sonarr &
 Lidarr &
 Homer &
-
 wait
 
 echo "Edit conf nginx"
@@ -152,3 +161,4 @@ sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH
 
 
 echo "Script Ended"
+exit 0
