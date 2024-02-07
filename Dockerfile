@@ -12,7 +12,7 @@ COPY transmission/** /etc/transmission-daemon/
 COPY install.sh /install.sh
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** $SERVARR_APP/Homer/assets
-COPY assets/servarr.png $SERVARR_APP/Homer/assets/icons/favicon.ico
+COPY assets/logo.png $SERVARR_APP/Homer/assets/icons/favicon.ico
 
 
 RUN chmod +x /install.sh
