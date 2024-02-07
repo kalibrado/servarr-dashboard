@@ -116,8 +116,9 @@ function Prowlarr() {
     return
 }
 
-Config &
-wait
+if [[ "$EXEC_TYPE" == "full" ]]; then
+    Config 
+fi
 # Run in background for best performance
 Prowlarr &
 Readar &
