@@ -30,7 +30,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 VOLUME "$HOME/.config/"
 VOLUME "/etc/nginx" 
-VOLUME "/etc/transmission-daemon/settings.json"
+VOLUME "/etc/transmission-daemon"
 VOLUME $SERVARR_APP_PATH
 VOLUME $TRANSMISSION_DOWNLOADS_PATH 
  
