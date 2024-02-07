@@ -3,16 +3,19 @@ name: Docker Image CI
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: GitHub Tag Name
+        run: |
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
       -
         name: Checkout
         uses: actions/checkout@v4
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -31,4 +34,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ldfe/servarr-dashboard:$RELEASE_VERSION
+          tags: ldfe/servarr-dashboard:${{  github.ref_name }}
