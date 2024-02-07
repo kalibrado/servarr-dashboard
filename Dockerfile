@@ -7,7 +7,7 @@ ENV SERVARR_THEME="dark"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update -qq && apt-get install  --no-install-recommends -qq -y \
+RUN apt-get -qq update && apt-get -qq install --no-install-recommends -y \
 curl \
 nano \
 wget \
@@ -48,8 +48,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** $SERVARR_APP/Homer/assets
 COPY assets/servarr.png $SERVARR_APP/Homer/assets/icons/favicon.ico
 
-VOLUME "~/.config/"
-VOLUME "/etc/nginx"
+VOLUME [ "/.config/", "/etc/nginx" ]
 VOLUME $SERVARR_APP
 VOLUME $TRANSMISSION_DOWNLOADS_PATH
 VOLUME $LOGS_PATH
