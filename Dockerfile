@@ -17,7 +17,7 @@ RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
 RUN mkdir -p "$SERVARR_APP_PATH/Homer"
 
-RUN mkdir p /etc/nginx/
+RUN mkdir -p /etc/nginx/
 
 COPY nginx/** /etc/nginx/
 COPY transmission/** /etc/transmission-daemon/
