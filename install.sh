@@ -17,11 +17,11 @@ function __set_app() {
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
     echo "Autorisation $app in $WORKDIR/$app"
     chown "$USER_APP":"$USER_APP" -R "$WORKDIR/$app"
-    "$WORKDIR/$app/$app" -nobrowser &
+    "$WORKDIR/$app/$app" -nobrowser -data=/config/"$app" &
     sleep 5s
-    sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "$HOME/.config/$app/config.xml"
-    sed -i "s|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g" "$HOME/.config/$app/config.xml"
-    sed -i "s|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g" "$HOME/.config/$app/config.xml"
+    sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "/config/$app/config.xml"
+    sed -i "s|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g" "/config/$app/config.xml"
+    sed -i "s|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g" "/config/$app/config.xml"
     pkill -f "$WORKDIR/$app"
     return
 }
@@ -49,30 +49,6 @@ function __get_app(){
         mv "$app" "$WORKDIR/"
     fi
     return 
-}
-
-function Config() {
-    echo "Update systeme..."
-    apt-get -qq update 
-    for i in "${packages[@]}"
-    do
-        if ! [ -x "$(command -v "$i")" ]; then
-            echo "--- installing $i ---" 
-            apt-get -y -qq install "$i"
-        else
-            echo "--- $i already installed --- "
-        fi
-    done
-    echo "Clean apt/lists..."
-    rm -rf /var/lib/apt/lists/*
-    apt-get -qq clean
-    apt-get -qq autoremove -y
-    echo "Create workspace $TRANSMISSION_DOWNLOADS_PATH"
-    mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
-    mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
-    echo "Create Workspace $WORKDIR"
-    mkdir -p "$WORKDIR"
-    return
 }
 
 function Homer() {
@@ -117,8 +93,28 @@ function Prowlarr() {
 }
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
-    Config 
+    echo "Update systeme..."
+    apt-get -qq update 
+    for i in "${packages[@]}"
+    do
+        if ! [ -x "$(command -v "$i")" ]; then
+            echo "--- installing $i ---" 
+            apt-get -y -qq install "$i"
+        else
+            echo "--- $i already installed --- "
+        fi
+    done
+    echo "Clean apt/lists..."
+    rm -rf /var/lib/apt/lists/*
+    apt-get -qq clean
+    apt-get -qq autoremove -y
+    echo "Create workspace $TRANSMISSION_DOWNLOADS_PATH"
+    mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
+    mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
+    echo "Create Workspace $WORKDIR"
+    mkdir -p "$WORKDIR"
 fi
+
 # Run in background for best performance
 Prowlarr &
 Readar &
@@ -128,13 +124,16 @@ Lidarr &
 Homer &
 wait
 
-echo "Edit conf nginx"
-sed -i "s|_WORKDIR_|$WORKDIR/Homer|g" /etc/nginx/nginx.conf
-echo "Edit conf theme nginx"
-sed -i "s|_SERVARR_THEME_|$SERVARR_THEME|g" /etc/nginx/theme-park.conf
-echo "Edit conf transmission"
-sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_COMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/completed|g" /etc/transmission-daemon/settings.json
-sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/incompleted|g" /etc/transmission-daemon/settings.json
+if [[ "$EXEC_TYPE" == "full" ]]; then
+    echo "Edit conf nginx"
+    sed -i "s|_WORKDIR_|$WORKDIR/Homer|g" /etc/nginx/nginx.conf
+    echo "Edit conf theme nginx"
+    sed -i "s|_SERVARR_THEME_|$SERVARR_THEME|g" /etc/nginx/theme-park.conf
+    echo "Edit conf transmission"
+    sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_COMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/completed|g" /etc/transmission-daemon/settings.json
+    sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/incompleted|g" /etc/transmission-daemon/settings.json
+
+fi
 
 echo "Script Ended"
 exit 0
