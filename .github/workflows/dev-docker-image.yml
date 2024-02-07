@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI dev
 
 on:
   push:
@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ldfe/servarr-dashboard:dev
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/servarr-dashboard:dev
