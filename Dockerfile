@@ -30,8 +30,8 @@ RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_COMPLETED_|$TRANSMISSION_DOWNLOADS_PA
 RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/incompleted|g" /etc/transmission-daemon/settings.json
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY assets/** $SERVARR_APP/Homer/assets
-COPY assets/servarr.png $SERVARR_APP/Homer/assets/icons/favicon.ico
+COPY assets/** $SERVARR_APP_PATH/Homer/assets
+COPY assets/servarr.png $SERVARR_APP_PATH/Homer/assets/icons/favicon.ico
  
 VOLUME "/etc/nginx" 
 VOLUME "/etc/transmission-daemon"
