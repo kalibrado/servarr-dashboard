@@ -32,6 +32,10 @@ function Homer() {
     unzip -qq Homer.zip -d $SERVARR_APP/Homer
     echo "Delete homer.zip"
     rm Homer.zip
+    echo "Copie assets Homer"
+    cp ./assets/** $SERVARR_APP/Homer/assets
+    echo "Edit favicon Homer"
+    cp ./assets/logo.png $SERVARR_APP/Homer/assets/icons/favicon.ico
 }
 
 function Readar() {

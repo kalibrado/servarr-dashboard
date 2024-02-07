@@ -9,12 +9,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 COPY nginx/** /etc/nginx/
 COPY transmission/** /etc/transmission-daemon/
-COPY install.sh /install.sh
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY assets/** $SERVARR_APP/Homer/assets
-COPY assets/logo.png $SERVARR_APP/Homer/assets/icons/favicon.ico
 
-
+COPY install.sh /install.sh
 RUN chmod +x /install.sh
 RUN bash /install.sh
 
