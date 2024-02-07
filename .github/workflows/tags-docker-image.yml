@@ -11,21 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-    
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            New release ${{ github.ref }}
-            https://hub.docker.com/repository/docker/ldfe/servarr-dashboard/tags
-          draft: false
-          prerelease: false
-  
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
