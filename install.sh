@@ -4,9 +4,29 @@ if [ "$EUID" -ne 0 ]; then
     echo "Please run as root."
     exit
 fi
+function Config() {
+    echo "Update syteme ..."
+    apt-get -qq update 
+    echo "Install tools ..."
+    apt-get install --no-install-recommends -y -qq curl nano wget nginx sqlite3 mediainfo libchromaprint-tools \
+    nginx-extras supervisor procps ca-certificates transmission-daemon unzip
+
+    echo "Clean apt/lists ..."
+    rm -rf /var/lib/apt/lists/*
+    apt-get -qq clean
+    apt-get -qq autoremove -y
+
+    echo "Create workspace $TRANSMISSION_DOWNLOADS_PATH"
+    mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
+    mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
+    echo "Create Workspace $SERVARR_APP"
+    mkdir -p "$SERVARR_APP"
+
+}
+
 
 function Homer() {
-     echo "Download Homer ..."
+    echo "Download Homer ..."
     wget -q --show-progress --no-check-certificate "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" -O Homer.zip
     echo "Unzip Homer.zip in $SERVARR_APP/Homer"
     unzip -qq Homer.zip -d $SERVARR_APP/Homer
@@ -27,8 +47,8 @@ function Readar() {
     rm Readarr*.linux*.tar.gz
     $SERVARR_APP/Readarr/Readarr -nobrowser >/dev/null 2>&1 &
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/readarr</UrlBase>|g' ~/.config/Readarr/config.xml
-    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g'  /.config/Readarr/config.xml
-    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g'  /.config/Readarr/config.xml
+    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Readarr/config.xml
+    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Readarr/config.xml
     pkill -f $SERVARR_APP/Readarr
 }
 
@@ -45,8 +65,8 @@ function Radarr() {
     rm Radarr*.linux*.tar.gz
     $SERVARR_APP/Radarr/Radarr -nobrowser >/dev/null 2>&1 &
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/radarr</UrlBase>|g' ~/.config/Radarr/config.xml
-    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g'  /.config/Radarr/config.xml
-    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g'  /.config/Radarr/config.xml
+    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Radarr/config.xml
+    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Radarr/config.xml
     pkill -f $SERVARR_APP/Radarr
     wait
 }
@@ -64,8 +84,8 @@ function Sonarr() {
     rm Sonarr*.linux*.tar.gz
     $SERVARR_APP/Sonarr/Sonarr -nobrowser >/dev/null 2>&1 &
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/sonarr</UrlBase>|g' ~/.config/Sonarr/config.xml
-    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g'  /.config/Sonarr/config.xml
-    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g'  /.config/Sonarr/config.xml
+    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Sonarr/config.xml
+    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Sonarr/config.xml
     pkill -f $SERVARR_APP/Sonarr
 }
 
@@ -82,8 +102,8 @@ function Lidarr() {
     rm Lidarr*.linux*.tar.gz
     $SERVARR_APP/Lidarr/Lidarr -nobrowser >/dev/null 2>&1 &
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/lidarr</UrlBase>|g' ~/.config/Lidarr/config.xml
-    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g'  /.config/Lidarr/config.xml
-    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g'  /.config/Lidarr/config.xml
+    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Lidarr/config.xml
+    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Lidarr/config.xml
     pkill -f $SERVARR_APP/Lidarr
 }
 
@@ -100,11 +120,14 @@ function Prowlarr() {
     rm Prowlarr*.linux*.tar.gz
     $SERVARR_APP/Prowlarr/Prowlarr -nobrowser >/dev/null 2>&1 &
     sed -i 's|<UrlBase></UrlBase>|<UrlBase>/prowlarr</UrlBase>|g' ~/.config/Prowlarr/config.xml
-    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g'  /.config/Prowlarr/config.xml
-    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g'  /.config/Prowlarr/config.xml
+    sed -i 's|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g' ~/.config/Prowlarr/config.xml
+    sed -i 's|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g' ~/.config/Prowlarr/config.xml
     pkill -f $SERVARR_APP/Prowlarr
     
 }
+
+Config
+
 # Run in background for best performance
 Prowlarr &
 Readar &
@@ -114,3 +137,14 @@ Lidarr &
 Homer &
 
 wait
+
+echo "Edit conf nginx"
+sed -i "s|_SERVARR_APP_|$SERVARR_APP/Homer|g" /etc/nginx/nginx.conf
+echo "Edit conf theme nginx"
+sed -i "s|_SERVARR_THEME_|$SERVARR_THEME|g" /etc/nginx/theme-park.conf
+echo "Edit conf transmission"
+sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_COMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/completed|g" /etc/transmission-daemon/settings.json
+sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/incompleted|g" /etc/transmission-daemon/settings.json
+
+
+echo "Script Ended"
