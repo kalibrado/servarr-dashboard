@@ -5,17 +5,22 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+WORKDIR=${SERVARR_APP_PATH:='/opt'}
+USER_APP=${USER:='root'}
+packages=(nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip)
+
 function __set_app() {
     app=$1
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
-    echo "Autorisation $app in $SERVARR_APP/$app"
-    chown "$app_lower":"$app_lower" -R "$SERVARR_APP/$app"
-    "$SERVARR_APP/$app/$app" -nobrowser &
+    echo "Autorisation $app in $WORKDIR/$app"
+    chown "$USER_APP":"$USER_APP" -R "$WORKDIR/$app"
+    "$WORKDIR/$app/$app" -nobrowser &
     sleep 5s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "$HOME/.config/$app/config.xml"
     sed -i "s|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g" "$HOME/.config/$app/config.xml"
     sed -i "s|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g" "$HOME/.config/$app/config.xml"
-    pkill -f "$SERVARR_APP/$app"
+    pkill -f "$WORKDIR/$app"
+    return
 }
 
 
@@ -25,12 +30,11 @@ function __get_app(){
     extra=$3
     typefile=$4
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
-
     echo "[GET] => $app "
     wget -q --show-progress --no-check-certificate "$extra" "$url"
     if [[ "$typefile" == "zipfile" ]]; then
-        echo "Extract zip file $app_lower.zip in $SERVARR_APP/$app"
-        unzip -qqo "$app_lower".zip -d "$SERVARR_APP/$app"
+        echo "Extract zip file $app_lower.zip in $WORKDIR/$app"
+        unzip -qqo "$app_lower".zip -d "$WORKDIR/$app"
         echo "Delete homer.zip"
         rm "$app_lower".zip
     else
@@ -38,17 +42,24 @@ function __get_app(){
         tar -xvzf "$app"*.tar.gz
         echo "Delete $app*.tar.gz"
         rm "$app"*.tar.gz
-        echo "Move $app $SERVARR_APP/"
-        mv "$app/" "$SERVARR_APP/"
+        echo "Move $app $WORKDIR/"
+        mv "$app" "$WORKDIR/"
     fi
+    return 
 }
 
 function Config() {
-    echo "Update syteme..."
-    apt-get -qq update
-    echo "Install tools curl nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip"
-    apt-get install --no-install-recommends -y -qq curl nano wget nginx sqlite3 mediainfo libchromaprint-tools \
-    nginx-extras supervisor procps ca-certificates transmission-daemon unzip 
+    echo "Update systeme..."
+    apt-get -qq update 
+    for i in "${packages[@]}"
+    do
+        if ! [ -x "$(command -v "$i")" ]; then
+            echo "--- installing $i ---" 
+            apt-get -y -qq install "$i"
+        else
+            echo "--- $i already installed --- "
+        fi
+    done
     echo "Clean apt/lists..."
     rm -rf /var/lib/apt/lists/*
     apt-get -qq clean
@@ -56,23 +67,23 @@ function Config() {
     echo "Create workspace $TRANSMISSION_DOWNLOADS_PATH"
     mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
     mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
-    echo "Create Workspace $SERVARR_APP"
-    mkdir -p "$SERVARR_APP"
+    echo "Create Workspace $WORKDIR"
+    mkdir -p "$WORKDIR"
     return
 }
 
 function Homer() {
     __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" --content-disposition "zipfile"
     echo "Copie assets Homer"
-    cp ./assets/** "$SERVARR_APP/Homer/assets"
+    cp ./assets/** "$WORKDIR/Homer/assets"
     echo "Edit favicon Homer"
-    cp ./assets/logo.png "$SERVARR_APP/Homer/assets/icons/favicon.ico"
+    cp ./assets/logo.png "$WORKDIR/Homer/assets/icons/favicon.ico"
     return
 }
 
 function Readar() { 
-    __get_app "Readar" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
-    __set_app "Readar"
+    __get_app "Readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __set_app "Readarr"
     return
 }
 
@@ -100,7 +111,8 @@ function Prowlarr() {
     return
 }
 
-Config
+Config &
+wait
 # Run in background for best performance
 Prowlarr &
 Readar &
@@ -111,7 +123,7 @@ Homer &
 wait
 
 echo "Edit conf nginx"
-sed -i "s|_SERVARR_APP_|$SERVARR_APP/Homer|g" /etc/nginx/nginx.conf
+sed -i "s|_WORKDIR_|$WORKDIR/Homer|g" /etc/nginx/nginx.conf
 echo "Edit conf theme nginx"
 sed -i "s|_SERVARR_THEME_|$SERVARR_THEME|g" /etc/nginx/theme-park.conf
 echo "Edit conf transmission"
