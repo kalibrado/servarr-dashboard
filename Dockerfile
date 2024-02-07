@@ -18,7 +18,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY install.sh /install.sh
 
 RUN chmod +x /install.sh
-RUN bash /install.sh
+RUN bash /install.sh dockerfile
 
 COPY assets/** $SERVARR_APP/PATHHomer/assets
 COPY assets/servarr.png $SERVARR_APP/PATHHomer/assets/icons/favicon.ico

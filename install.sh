@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e
+
+EXEC_TYPE=${1:="full"}
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root."
@@ -74,10 +77,12 @@ function Config() {
 
 function Homer() {
     __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" --content-disposition "zipfile"
-    echo "Copie assets Homer"
-    cp ./assets/** "$WORKDIR/Homer/assets"
-    echo "Edit favicon Homer"
-    cp ./assets/logo.png "$WORKDIR/Homer/assets/icons/favicon.ico"
+    if [[ "$EXEC_TYPE" == "full" ]]; then
+        echo "Copie assets Homer"
+        cp ./assets/** "$WORKDIR/Homer/assets"
+        echo "Edit favicon Homer"
+        cp ./assets/logo.png "$WORKDIR/Homer/assets/icons/favicon.ico"
+    fi
     return
 }
 
