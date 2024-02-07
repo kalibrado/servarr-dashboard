@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
-RUN mkdir -p "$SERVARR_APP/PATHHomer"
+RUN mkdir -p "$SERVARR_APP_PATH/Homer"
 RUN mkdir p /etc/nginx/
 
 COPY nginx/** /etc/nginx/
@@ -20,8 +20,8 @@ COPY install.sh /install.sh
 RUN chmod +x /install.sh
 RUN bash /install.sh dockerfile
 
-COPY assets/** $SERVARR_APP/PATHHomer/assets
-COPY assets/servarr.png $SERVARR_APP/PATHHomer/assets/icons/favicon.ico
+COPY assets/** $SERVARR_APP_PATH/Homer/assets
+COPY assets/servarr.png $SERVARR_APP_PATH/Homer/assets/icons/favicon.ico
 
 VOLUME "$HOME/.config/"
 VOLUME "/etc/nginx" 
