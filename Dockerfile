@@ -7,7 +7,7 @@ ENV SERVARR_THEME="dark"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -qq update && apt-get -qq install --no-install-recommends -y \
+RUN apt-get -qq update && apt-get install --no-install-recommends -y -qq \
 curl \
 nano \
 wget \
