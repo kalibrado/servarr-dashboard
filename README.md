@@ -1,3 +1,4 @@
+[![Create Release](https://github.com/kalibrado/servarr-dashboard/actions/workflows/tags-docker-image.yml/badge.svg?branch=main&event=deployment)](https://github.com/kalibrado/servarr-dashboard/actions/workflows/tags-docker-image.yml)
 
 TODO
 Add WebApp SQLBrowser for backups
