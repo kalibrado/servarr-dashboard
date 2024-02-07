@@ -7,7 +7,7 @@ ENV SERVARR_THEME="dark"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt-get install  --no-install-recommends -y \
+RUN apt-get update -qq && apt-get install  --no-install-recommends -qq -y \
 curl \
 nano \
 wget \
@@ -23,8 +23,8 @@ transmission-daemon \
 unzip
 
 RUN rm -rf /var/lib/apt/lists/*
-RUN apt clean
-RUN apt autoremove -y
+RUN apt-get -qq clean
+RUN apt-get -qq autoremove -y
 
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
@@ -48,7 +48,10 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** $SERVARR_APP/Homer/assets
 COPY assets/servarr.png $SERVARR_APP/Homer/assets/icons/favicon.ico
 
-VOLUME [ "/.config/", $SERVARR_APP, $TRANSMISSION_DOWNLOADS_PATH, "/etc/nginx"]
+VOLUME "~/.config/"
+VOLUME "/etc/nginx"
+VOLUME $SERVARR_APP
+VOLUME $TRANSMISSION_DOWNLOADS_PATH
  
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
