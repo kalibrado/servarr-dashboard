@@ -1,6 +1,7 @@
 # Servarr-Dashboard
 
 Here is a docker image that contains the following apps:
+
 - [Nginx (reverse proxy)](https://www.nginx.com/)
 - [Homer (Dashboard)](https://github.com/bastienwirtz/homer)
 - [Prowlarr (Indexer)](https://wiki.servarr.com/en/prowlarr)
@@ -9,6 +10,10 @@ Here is a docker image that contains the following apps:
 - [Lidarr (Music)](https://wiki.servarr.com/en/lidarr)
 - [Readarr (Books)](https://wiki.servarr.com/en/readarr)
 - [Transmission](https://transmissionbt.com/)
+- [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
+- [Jellyfin](https://jellyfin.org/)
+
+FlareSolverr is a proxy server to bypass Cloudflare and DDoS-GUARD protection.
 
 This images is configured so that each service is accessible from an integrated proxy reverse to simplify the connection between applications
 

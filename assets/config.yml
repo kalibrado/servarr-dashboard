@@ -87,3 +87,8 @@ services:
         logo: "/assets/transmission.png"
         url: "/transmission"
         target: "_blank"
+
+      - name: "Jellyfin"
+        logo: "/assets/jellyfin.png"
+        url: "/jellyfin"
+        target: "_blank"

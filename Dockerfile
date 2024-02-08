@@ -4,15 +4,36 @@ ENV SERVARR_CONFIG_PATH="/config"
 ENV SERVARR_APP_PATH="/srv"
 ENV SERVARR_LOGS_PATH="/config/logs"
 ENV SERVARR_THEME="overseerr"
+
+ENV JELLYFIN_DATA_DIR="$SERVARR_CONFIG_PATH/Jellyfin"
+ENV JELLYFIN_WEB_DIR="$SERVARR_APP_PATH/Jellyfin/Web"
+ENV JELLYFIN_CACHE_DIR="$SERVARR_APP_PATH/Jellyfin/Cache"
+ENV JELLYFIN_LOG_DIR="$SERVARR_LOGS_PATH/Jellyfin"
+ENV JELLYFIN_CONFIG_DIR="$SERVARR_CONFIG_PATH/Jellyfin"
+
 ENV TRANSMISSION_AUTH="true"
 ENV TRANSMISSION_USER="transmission"
 ENV TRANSMISSION_PASS="transmission"
 ENV TRANSMISSION_DOWNLOADS_PATH="/media/downloads"
 
+ENV FLARESOLVERR_VERSION="v3.3.13"
+ENV FLARESOLVERR_LOG_LEVEL="info"
+ENV FLARESOLVERR_LOG_HTML="false"
+ENV FLARESOLVERR_CAPTCHA_SOLVER="none"
+ENV FLARESOLVERR_TZ="UTC"
+ENV FLARESOLVERR_LANG="none"
+ENV FLARESOLVERR_HEADLESS="true" 
+ENV FLARESOLVERR_BROWSER_TIMEOUT="40000" 
+ENV FLARESOLVERR_TEST_URL="https://www.google.com"
+ENV FLARESOLVERR_PORT="8191"
+ENV FLARESOLVERR_HOST="0.0.0.0"
+ENV FLARESOLVERR_PROMETHEUS_ENABLED="false"
+ENV FLARESOLVERR_PROMETHEUS_PORT="8192"
+
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq update 
-RUN apt-get install -qq -y nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base
+RUN apt-get install -qq -y nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver 
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get -qq clean
 RUN apt-get -qq autoremove -y
