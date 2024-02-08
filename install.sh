@@ -29,13 +29,12 @@ FLARESOLVERR_HOST=$"FLARESOLVERR_HOST0.0.0{:=.0"}
 FLARESOLVERR_PROMETHEUS_ENABLED=${FLARESOLVERR_PROMETHEUS_ENABLED:="false"}
 FLARESOLVERR_PROMETHEUS_PORT=${FLARESOLVERR_PROMETHEUS_PORT:="8192"}
 
-JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
-JELLYFIN_WEB_DIR=${JELLYFIN_WEB_DIR:="$SERVARR_APP_PATH/Jellyfin/Web"}
+JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_CONFIG_PATH/Jellyfin/data"}
+JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin/config"}
 JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_PATH/Jellyfin/Cache"}
-JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_LOGS_PATH/Jellyfin"}
-JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
+JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
 
-PACKAGES=(curl software-properties-common gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium  chromium-common chromium-driver xvfb dumb-init)
+PACKAGES=(curl software-properties-common gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
     echo "--> Update systeme..."
@@ -154,7 +153,7 @@ function Jellyfin() {
     export VERSION_OS="$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release )"
     export VERSION_CODENAME="$( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release )"
     export DPKG_ARCHITECTURE="$( dpkg --print-architecture )"
-cat <<EOF | sudo tee /etc/apt/sources.list.d/jellyfin.sources
+cat <<EOF | tee /etc/apt/sources.list.d/jellyfin.sources
 Types: deb
 URIs: https://repo.jellyfin.org/${VERSION_OS}
 Suites: ${VERSION_CODENAME}
@@ -166,9 +165,9 @@ EOF
     apt update
     echo "--> Installing Jellyfin."
     apt install --yes jellyfin
-    pkill -f jellyfin
 }
 
+Jellyfin &
 Prowlarr &
 Readar &
 Radarr &
@@ -176,7 +175,6 @@ Sonarr &
 Lidarr &
 Homer &
 FlareSolverr &
-Jellyfin &
 wait
 
 echo "--> Script Ended"
