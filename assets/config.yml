@@ -6,11 +6,20 @@ logo: "/assets/servarr.png"
 header: true
 footer: '<p>Created By kalibrado <span class="has-text-danger">❤️</span> // Fork me on <a href="https://github.com/kalibrado/servarr-all-in-one" target="_blank"><i class="fab fa-github-alt"></i></a></p>' 
 
+connectivityCheck: true 
+
+proxy:
+  useCredentials: true 
+
+defaults:
+  layout: columns 
+  colorTheme: dark
+  
 stylesheet:
   - "assets/custom.css"
 
 columns: "3"
-theme: default
+theme: dark
 colors:
   light:
     highlight-primary: "#3367d6"

@@ -4,17 +4,18 @@ services:
   servarr-dashboard:
     container_name: servarr-dashboard
     image: ldfe/servarr-dashboard
+    restart: always
     environment:
-      - SERVARR_THEME="dark" # aquamarine ... https://docs.theme-park.dev/themes/requestrr/
+      - SERVARR_THEME="overseerr" # set this to change theme in app *arrs look -> https://docs.theme-park.dev/themes/sonarr/
+      - TRANSMISSION_AUTH="true" # enable or not auth methode on in tranmission
+      - TRANSMISSION_USER="transmission" # default user tranmission
+      - TRANSMISSION_PASS="transmission" # default pass tranmission
     volumes:
-      - /opt/servarr/config:.config/
+      - /opt/servarr/config:/config
       - /opt/servarr/nginx:/etc/nginx
       - /opt/servarr/app:/srv
-      - /opt/servarr/logs:/var/log
-      - /opt/servarr/tranmission/settings:/etc/transmission-daemon/settings.json
-      - /mnt:/mnt
-      - /mnt/downloads:/media/downloads
+      - /opt/servarr/logs:/var/log 
+      - /opt/servarr/downloads:/media/downloads
     ports:
       - 80:80 # web ui port
-      - 51413:51413 # tranmission port
     

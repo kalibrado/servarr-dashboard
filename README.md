@@ -13,3 +13,6 @@ cd servarr-dashboard
 docker build -t servarr .
 
 docker run  --name=servarr -p 80:80  servarr
+
+
+(Homer)[https://github.com/bastienwirtz/homer] 
