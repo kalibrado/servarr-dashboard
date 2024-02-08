@@ -15,7 +15,7 @@ SERVARR_CONFIG_PATH=${SERVARR_CONFIG_PATH:="/config"}
 TRANSMISSION_DOWNLOADS_PATH=${TRANSMISSION_DOWNLOADS_PATH:="/media/downloads"}
 USER_APP=${USER:='root'}
 EXEC_TYPE=${1:="full"}
-PACKAGES=(nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip)
+PACKAGES=(nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base)
 
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
