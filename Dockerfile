@@ -33,7 +33,11 @@ ENV FLARESOLVERR_PROMETHEUS_PORT="8192"
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq update 
-RUN apt-get install -qq -y nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver 
+RUN apt-get install -qq -y \
+curl gnupg software-properties-common \
+nano wget nginx sqlite3 mediainfo libchromaprint-tools \
+nginx-extras supervisor procps ca-certificates transmission-daemon \
+unzip gettext-base chromium chromium-common chromium-driver  xvfb dumb-init
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get -qq clean
 RUN apt-get -qq autoremove -y

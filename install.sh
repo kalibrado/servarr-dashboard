@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script for install all app
+# Script for install all apps
 
 set -e
 
@@ -35,7 +35,7 @@ JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_PATH/Jellyfin/Cache"}
 JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_LOGS_PATH/Jellyfin"}
 JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
 
-PACKAGES=(gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver) #xvfb dumb-init)
+PACKAGES=(curl software-properties-common gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium  chromium-common chromium-driver xvfb dumb-init)
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
     echo "--> Update systeme..."
@@ -144,20 +144,22 @@ function Prowlarr() {
 }
 
 function Jellyfin() {
+    echo "--> Add universe repository"
+    add-apt-repository universe
     echo "--> Creating APT keyring directory."
     mkdir -p /etc/apt/keyrings
-    wget https://repo.jellyfin.org/jellyfin_team.gpg.key | gpg --dearmor --yes --output /etc/apt/keyrings/jellyfin.gpg
+    curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg
     echo "--> Found old-style '/etc/apt/sources.list.d/jellyfin.list' configuration; removing it."
     rm -f /etc/apt/sources.list.d/jellyfin.list
-    REPO_OS=$(awk -F'=' '/^ID=/{ print $NF }' /etc/os-release)
-    VERSION=$(awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release)
-    ARCHITECTURE=$(dpkg --print-architecture)
-    cat <<EOF | tee /etc/apt/sources.list.d/jellyfin.sources
+    export VERSION_OS="$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release )"
+    export VERSION_CODENAME="$( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release )"
+    export DPKG_ARCHITECTURE="$( dpkg --print-architecture )"
+cat <<EOF | sudo tee /etc/apt/sources.list.d/jellyfin.sources
 Types: deb
-URIs: https://repo.jellyfin.org/${REPO_OS}
-Suites: ${VERSION}
+URIs: https://repo.jellyfin.org/${VERSION_OS}
+Suites: ${VERSION_CODENAME}
 Components: main
-Architectures: ${ARCHITECTURE}
+Architectures: ${DPKG_ARCHITECTURE}
 Signed-By: /etc/apt/keyrings/jellyfin.gpg
 EOF
     echo "--> Updating APT repositories."

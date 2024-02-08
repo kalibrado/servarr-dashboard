@@ -13,6 +13,8 @@ Here is a docker image that contains the following apps:
 - [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
 - [Jellyfin](https://jellyfin.org/)
 
+⚡soon the addition of openvpn
+
 FlareSolverr is a proxy server to bypass Cloudflare and DDoS-GUARD protection.
 
 This images is configured so that each service is accessible from an integrated proxy reverse to simplify the connection between applications
