@@ -21,6 +21,7 @@ RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
 RUN mkdir -p "$SERVARR_APP_PATH/Homer"
 
+
 COPY install.sh /install.sh
 RUN chmod +x /install.sh
 RUN bash /install.sh dockerfile
@@ -38,5 +39,8 @@ VOLUME $TRANSMISSION_DOWNLOADS_PATH
 
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
- 
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 CMD ["/usr/bin/supervisord"]

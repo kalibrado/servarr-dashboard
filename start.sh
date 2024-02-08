@@ -1,4 +1,5 @@
-
+#!/bin/bash
+set -e
 
 SERVARR_CONFIG_PATH=${SERVARR_CONFIG_PATH:="/config"}
 TRANSMISSION_DOWNLOADS_PATH=${TRANSMISSION_DOWNLOADS_PATH:="/media/downloads"}
