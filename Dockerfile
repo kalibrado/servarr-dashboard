@@ -1,9 +1,13 @@
 FROM debian
 
-ENV TRANSMISSION_DOWNLOADS_PATH="/media/downloads"
+ENV SERVARR_CONFIG_PATH="/config"
 ENV SERVARR_APP_PATH="/srv"
-ENV LOGS_PATH="/var/log"
-ENV SERVARR_THEME="dark"
+ENV SERVARR_LOGS_PATH="/var/log"
+ENV SERVARR_THEME="overseerr"
+ENV TRANSMISSION_AUTH="true"
+ENV TRANSMISSION_USER="transmission"
+ENV TRANSMISSION_PASS="transmission"
+ENV TRANSMISSION_DOWNLOADS_PATH="/media/downloads"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -17,29 +21,26 @@ RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/completed"
 RUN mkdir -p "$TRANSMISSION_DOWNLOADS_PATH/incompleted"
 RUN mkdir -p "$SERVARR_APP_PATH/Homer"
 
+
 COPY install.sh /install.sh
 RUN chmod +x /install.sh
 RUN bash /install.sh dockerfile
 
 COPY nginx/** /etc/nginx/
-RUN sed -i "s|_SERVARR_APP_|$SERVARR_APP_PATH/Homer|g" /etc/nginx/nginx.conf
-RUN sed -i "s|_SERVARR_THEME_|$SERVARR_THEME|g" /etc/nginx/theme-park.conf
-
-COPY transmission/** /etc/transmission-daemon/
-RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_COMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/completed|g" /etc/transmission-daemon/settings.json
-RUN sed -i "s|_TRANSMISSION_DOWNLOADS_PATH_INCOMPLETED_|$TRANSMISSION_DOWNLOADS_PATH/incompleted|g" /etc/transmission-daemon/settings.json
-
+COPY transmission/** $SERVARR_CONFIG_PATH/Transmission
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/** $SERVARR_APP_PATH/Homer/assets
 COPY assets/servarr.png $SERVARR_APP_PATH/Homer/assets/icons/favicon.ico
  
 VOLUME "/etc/nginx" 
-VOLUME "/etc/transmission-daemon"
-VOLUME "/config"
+VOLUME $SERVARR_CONFIG_PATH
 VOLUME $SERVARR_APP_PATH
 VOLUME $TRANSMISSION_DOWNLOADS_PATH 
 
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
- 
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 CMD ["/usr/bin/supervisord"]
