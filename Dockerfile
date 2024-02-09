@@ -14,7 +14,7 @@ ENV TRANSMISSION_INCOMPLETED_DIR="/media/downloads/incompleted"
 ENV RPC_PASSWORD="transmission"
 ENV RPC_USERNAME='transmission'
 ENV RPC_AUTH_REQUIRED=true
-
+q
 ARG DEBIAN_FRONTEND=noninteractive
 
 COPY setup.sh /setup.sh
@@ -30,7 +30,7 @@ COPY assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
 VOLUME "/etc/nginx/" 
 VOLUME $SERVARR_CONF_DIR
 VOLUME $SERVARR_APP_DIR
-VOLUME $TRANSMISSION_DOWNLOADS_PATH 
+VOLUME $TRANSMISSION_COMPLETED_DIR 
 
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
