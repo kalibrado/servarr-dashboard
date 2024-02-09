@@ -155,7 +155,8 @@ function Jellyfin() {
     echo "--> Updating APT repositories."
     apt update
     echo "--> Installing Jellyfin."
-    apt install --yes jellyfin jellyfin-ffmpeg5 jellyfin-server jellyfin-web
+    apt install -qy jellyfin
+    ln -s /usr/share/jellyfin/web/ /usr/lib/jellyfin/bin/jellyfin-web
 }
 
 # Performance optimization by parallelizing installations
