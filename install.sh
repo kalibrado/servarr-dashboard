@@ -172,6 +172,8 @@ cat <<EOF > $LOGIO_FILE_INPUT_CONFIG_PATH/settings.json
 EOF
     echo "--> Install log.io"
     npm install -g log.io
+    echo "--> Create log dir for logio"
+    mkdir -p "$SERVARR_LOGS_PATH/logio"
 }
 
 function Jellyfin() {
