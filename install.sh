@@ -196,6 +196,7 @@ Lidarr &
 Homer &
 FlareSolverr &
 Jellyfin &
+LogIO &
 wait
 
 echo "--> Create Transmission log dir "
