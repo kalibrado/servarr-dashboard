@@ -64,6 +64,8 @@ fi
 function __set_app() {
     app=$1
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
+    echo "--> Create log dir for $app_lower"
+    mkdir -p "SERVARR_LOGS_PATH/$app_lower"
     echo "--> Autorisation $app in $SERVARR_APP_PATH/$app"
     chown "$USER_APP":"$USER_APP" -R "$SERVARR_APP_PATH/$app"
     "$SERVARR_APP_PATH/$app/$app" -nobrowser -data="$SERVARR_CONFIG_PATH/$app" &
