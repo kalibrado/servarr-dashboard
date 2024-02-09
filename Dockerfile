@@ -50,9 +50,9 @@ RUN mkdir -p "$SERVARR_APP_PATH/Homer"
 RUN mkdir -p "$SERVARR_LOGS_PATH"
 
 
-COPY install.sh /install.sh
-RUN chmod +x /install.sh
-RUN bash /install.sh dockerfile
+COPY setup.sh /setup.sh
+RUN chmod +x /setup.sh
+RUN bash /setup.sh -t docker
 
 COPY nginx/ /etc/nginx/
 COPY transmission/ $SERVARR_CONFIG_PATH/Transmission/
