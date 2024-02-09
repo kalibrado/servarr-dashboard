@@ -8,8 +8,7 @@ TRANSMISSION_PASS=${TRANSMISSION_PASS:="transmission"}
 TRANSMISSION_AUTH=${TRANSMISSION_AUTH:="true"}
 
 echo "--> Update Nginx conf"
-envsubst '$SERVARR_THEME $SERVARR_APP_PATH' < /etc/nginx/nginx.conf > tmp.conf
-mv tmp.conf /etc/nginx/nginx.conf
+envsubst '$SERVARR_THEME $SERVARR_APP_PATH' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
 
 echo "--> Setup settings Transmission"
 _get_prev_json(){
