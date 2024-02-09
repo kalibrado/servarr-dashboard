@@ -193,9 +193,11 @@ Sonarr &
 Lidarr &
 Homer &
 FlareSolverr &
+Jellyfin &
 wait
 
-Jellyfin 
+echo "--> Create Transmission log dir "
+mkdir -p "$SERVARR_LOGS_PATH/transmission"
 
 echo "--> Script Ended"
 exit 0
