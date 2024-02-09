@@ -112,6 +112,8 @@ function Homer() {
 
 function FlareSolverr() {
     __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" --content-disposition
+    echo "--> Create log dir for flaresolverr"
+    mkdir -p "$SERVARR_LOGS_PATH/flaresolverr"
     return 
 }
 
