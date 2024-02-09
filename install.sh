@@ -34,17 +34,17 @@ JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin/config
 JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_PATH/Jellyfin/Cache"}
 JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
 
-PACKAGES=(curl software-properties-common gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
+PACKAGES=(curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
     echo "--> Update systeme..."
     apt-get -qq update
     for i in "${PACKAGES[@]}"; do
         if ! [ -x "$(command -v "$i")" ]; then
-            echo "--> installing $i ---"
+            echo "--> installing $i"
             apt-get -y -qq install "$i"
         else
-            echo "-->  $i already installed --- "
+            echo "-->  $i already installed"
         fi
     done
     echo "--> Clean apt/lists..."
@@ -143,31 +143,17 @@ function Prowlarr() {
 }
 
 function Jellyfin() {
-    echo "--> Add universe repository"
-    add-apt-repository universe
-    echo "--> Creating APT keyring directory."
-    mkdir -p /etc/apt/keyrings
-    curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg
-    echo "--> Found old-style '/etc/apt/sources.list.d/jellyfin.list' configuration; removing it."
-    rm -f /etc/apt/sources.list.d/jellyfin.list
-    export VERSION_OS="$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release )"
-    export VERSION_CODENAME="$( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release )"
-    export DPKG_ARCHITECTURE="$( dpkg --print-architecture )"
-cat <<EOF | tee /etc/apt/sources.list.d/jellyfin.sources
-Types: deb
-URIs: https://repo.jellyfin.org/${VERSION_OS}
-Suites: ${VERSION_CODENAME}
-Components: main
-Architectures: ${DPKG_ARCHITECTURE}
-Signed-By: /etc/apt/keyrings/jellyfin.gpg
-EOF
+    echo "--> Import Jellyfin Media Server APT Repositories"
+    curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --dearmor -o /usr/share/keyrings/jellyfin.gpg > /dev/null
+    echo "--> Stable Jellyfin Version"
+    echo "deb [arch=$( dpkg --print-architecture ) signed-by=/usr/share/keyrings/jellyfin.gpg] https://repo.jellyfin.org/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/jellyfin.list
     echo "--> Updating APT repositories."
     apt update
     echo "--> Installing Jellyfin."
-    apt install --yes jellyfin
+    apt install --yes jellyfin jellyfin-ffmpeg5 jellyfin-server jellyfin-web
 }
 
-Jellyfin &
+# Performance optimization by parallelizing installations
 Prowlarr &
 Readar &
 Radarr &
@@ -176,6 +162,8 @@ Lidarr &
 Homer &
 FlareSolverr &
 wait
+
+Jellyfin 
 
 echo "--> Script Ended"
 exit 0

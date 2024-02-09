@@ -33,7 +33,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq update 
 RUN apt-get install -qq -y \
-curl gnupg software-properties-common \
+curl gnupg software-properties-common apt-transport-https \
 nano wget nginx sqlite3 mediainfo libchromaprint-tools \
 nginx-extras supervisor procps ca-certificates transmission-daemon \
 unzip gettext-base chromium chromium-common chromium-driver  xvfb dumb-init
@@ -51,10 +51,10 @@ COPY install.sh /install.sh
 RUN chmod +x /install.sh
 RUN bash /install.sh dockerfile
 
-COPY nginx/** /etc/nginx/
-COPY transmission/** $SERVARR_CONFIG_PATH/Transmission/
+COPY nginx/ /etc/nginx/
+COPY transmission/ $SERVARR_CONFIG_PATH/Transmission/
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY assets/** $SERVARR_APP_PATH/Homer/assets
+COPY assets/ $SERVARR_APP_PATH/Homer/assets/
 COPY assets/servarr.png $SERVARR_APP_PATH/Homer/assets/icons/favicon.ico
  
 VOLUME "/etc/nginx" 
