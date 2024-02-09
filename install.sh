@@ -65,14 +65,12 @@ function __set_app() {
     app=$1
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
     echo "--> Create log dir for $app_lower"
-    mkdir -p "SERVARR_LOGS_PATH/$app_lower"
+    mkdir -p "$SERVARR_LOGS_PATH/$app_lower"
     echo "--> Autorisation $app in $SERVARR_APP_PATH/$app"
     chown "$USER_APP":"$USER_APP" -R "$SERVARR_APP_PATH/$app"
     "$SERVARR_APP_PATH/$app/$app" -nobrowser -data="$SERVARR_CONFIG_PATH/$app" &
     sleep 5s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "$SERVARR_CONFIG_PATH/$app/config.xml"
-    sed -i "s|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g" "$SERVARR_CONFIG_PATH/$app/config.xml"
-    sed -i "s|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g" "$SERVARR_CONFIG_PATH/$app/config.xml"
     pkill -f "$SERVARR_APP_PATH/$app/$app"
     return
 }
