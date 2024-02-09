@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# Script for install all app 
+# Script for install all apps
 
 set -e
-
 
 if [ "$EUID" -ne 0 ]; then
     echo "--> Please run as root."
@@ -12,22 +11,42 @@ fi
 
 SERVARR_APP_PATH=${SERVARR_APP_PATH:='/opt'}
 SERVARR_CONFIG_PATH=${SERVARR_CONFIG_PATH:="/config"}
+SERVARR_LOGS_PATH=${SERVARR_LOGS_PATH:="/var/log"}
+
 TRANSMISSION_DOWNLOADS_PATH=${TRANSMISSION_DOWNLOADS_PATH:="/media/downloads"}
 USER_APP=${USER:='root'}
 EXEC_TYPE=${1:="full"}
-PACKAGES=(nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip)
 
+FLARESOLVERR_VERSION=${FLARESOLVERR_VERSION:="v3.3.13"}
+FLARESOLVERR_LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:="info"}
+FLARESOLVERR_LOG_HTML=${FLARESOLVERR_LOG_HTML:="false"}
+FLARESOLVERR_CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:="none"}
+FLARESOLVERR_TZ=${FLARESOLVERR_TZ:="UTC"}
+FLARESOLVERR_LANG=${FLARESOLVERR_LANG:="none"}
+FLARESOLVERR_HEADLESS=${FLARESOLVERR_HEADLESS:="true" }
+FLARESOLVERR_BROWSER_TIMEOUT=${FLARESOLVERR_BROWSER_TIMEOUT:="40000" }
+FLARESOLVERR_TEST_URL=${FLARESOLVERR_TEST_URL:="https://www.google.com"}
+FLARESOLVERR_PORT=${FLARESOLVERR_PORT:="8191"}
+FLARESOLVERR_HOST=$"FLARESOLVERR_HOST0.0.0{:=.0"}
+FLARESOLVERR_PROMETHEUS_ENABLED=${FLARESOLVERR_PROMETHEUS_ENABLED:="false"}
+FLARESOLVERR_PROMETHEUS_PORT=${FLARESOLVERR_PROMETHEUS_PORT:="8192"}
+
+JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_CONFIG_PATH/Jellyfin/data"}
+JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin/config"}
+JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_PATH/Jellyfin/Cache"}
+JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
+
+PACKAGES=(curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
     echo "--> Update systeme..."
-    apt-get -qq update 
-    for i in "${PACKAGES[@]}"
-    do
+    apt-get -qq update
+    for i in "${PACKAGES[@]}"; do
         if ! [ -x "$(command -v "$i")" ]; then
-            echo "--> installing $i ---" 
+            echo "--> installing $i"
             apt-get -y -qq install "$i"
         else
-            echo "-->  $i already installed --- "
+            echo "-->  $i already installed"
         fi
     done
     echo "--> Clean apt/lists..."
@@ -41,24 +60,21 @@ if [[ "$EXEC_TYPE" == "full" ]]; then
     mkdir -p "$SERVARR_APP_PATH"
 fi
 
-
-
 function __set_app() {
     app=$1
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
+    echo "--> Create log dir for $app_lower"
+    mkdir -p "$SERVARR_LOGS_PATH/$app_lower"
     echo "--> Autorisation $app in $SERVARR_APP_PATH/$app"
     chown "$USER_APP":"$USER_APP" -R "$SERVARR_APP_PATH/$app"
     "$SERVARR_APP_PATH/$app/$app" -nobrowser -data="$SERVARR_CONFIG_PATH/$app" &
     sleep 5s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "$SERVARR_CONFIG_PATH/$app/config.xml"
-    sed -i "s|<AuthenticationMethod></AuthenticationMethod>|<AuthenticationMethod>Basic</AuthenticationMethod>|g" "$SERVARR_CONFIG_PATH/$app/config.xml"
-    sed -i "s|<AuthenticationRequired></AuthenticationRequired>|<AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>|g" "$SERVARR_CONFIG_PATH/$app/config.xml"
     pkill -f "$SERVARR_APP_PATH/$app/$app"
     return
 }
 
-
-function __get_app(){
+function __get_app() {
     app=$1
     url=$2
     extra=$3
@@ -79,7 +95,7 @@ function __get_app(){
         echo "--> Move $app $SERVARR_APP_PATH/"
         mv "$app" "$SERVARR_APP_PATH/"
     fi
-    return 
+    return
 }
 
 function Homer() {
@@ -93,7 +109,14 @@ function Homer() {
     return
 }
 
-function Readar() { 
+function FlareSolverr() {
+    __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" --content-disposition
+    echo "--> Create log dir for flaresolverr"
+    mkdir -p "$SERVARR_LOGS_PATH/flaresolverr"
+    return 
+}
+
+function Readar() {
     __get_app "Readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Readarr"
     return
@@ -123,13 +146,32 @@ function Prowlarr() {
     return
 }
 
+
+function Jellyfin() {
+    echo "--> Import Jellyfin Media Server APT Repositories"
+    curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --dearmor -o /usr/share/keyrings/jellyfin.gpg > /dev/null
+    echo "--> Stable Jellyfin Version"
+    echo "deb [arch=$( dpkg --print-architecture ) signed-by=/usr/share/keyrings/jellyfin.gpg] https://repo.jellyfin.org/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/jellyfin.list
+    echo "--> Updating APT repositories."
+    apt update
+    echo "--> Installing Jellyfin."
+    apt install -qy jellyfin
+    ln -s /usr/share/jellyfin/web/ /usr/lib/jellyfin/bin/jellyfin-web
+}
+
+# Performance optimization by parallelizing installations
 Prowlarr &
 Readar &
 Radarr &
 Sonarr &
 Lidarr &
 Homer &
+FlareSolverr &
+Jellyfin &
 wait
+
+echo "--> Create Transmission log dir "
+mkdir -p "$SERVARR_LOGS_PATH/transmission"
 
 echo "--> Script Ended"
 exit 0

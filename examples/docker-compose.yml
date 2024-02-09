@@ -1,0 +1,22 @@
+version: '4'
+
+services:
+  servarr-dashboard:
+    container_name: servarr-dashboard
+    image: ldfe/servarr-dashboard
+    restart: always
+    environment:
+      - SERVARR_THEME="overseerr" # set this to change theme in app *arrs look -> https://docs.theme-park.dev/themes/sonarr/
+      - TRANSMISSION_AUTH="true" # enable or not auth methode in tranmission
+      - TRANSMISSION_USER="transmission" # user tranmission
+      - TRANSMISSION_PASS="transmission" # pass tranmission
+    volumes:
+      - /opt/servarr/config:/config # optional
+      - /opt/servarr/nginx:/etc/nginx # optional
+      - /opt/servarr/app:/srv # optional
+      - /opt/servarr/logs:/var/log  # optional
+      - /opt/servarr/downloads:/media/downloads # optional
+    ports:
+      - 80:80 # Servarr Dashboard Port
+      - 33242:33242/tcp  # Transmission Torrent Port TCP
+      - 33242:33242/udp  # Transmission Torrent Port UDP 

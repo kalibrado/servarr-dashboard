@@ -46,7 +46,7 @@
     "rpc-bind-address": "0.0.0.0",
     "rpc-enabled": true,
     "rpc-host-whitelist": "",
-    "rpc-authentication-required": false,
+    "rpc-authentication-required": true,
     "rpc-host-whitelist-enabled": true,
     "rpc-password": "{2fe05fd8508078e36f7e33ab1b0f19f3259a2fd5FRxyjGgy",
     "rpc-username": "transmission",
