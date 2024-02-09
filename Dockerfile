@@ -2,8 +2,10 @@ FROM debian
 
 ENV SERVARR_CONFIG_PATH="/config"
 ENV SERVARR_APP_PATH="/srv"
-ENV SERVARR_LOGS_PATH="/config/logs"
+ENV SERVARR_LOGS_PATH="/var/log"
 ENV SERVARR_THEME="overseerr"
+
+ENV LOGIO_FILE_INPUT_CONFIG_PATH="$SERVARR_CONFIG_PATH/logio/settings.json"
 
 ENV JELLYFIN_DATA_DIR="$SERVARR_CONFIG_PATH/Jellyfin/data"
 ENV JELLYFIN_CONFIG_DIR="$SERVARR_CONFIG_PATH/Jellyfin/config"
@@ -36,7 +38,8 @@ RUN apt-get install -qq -y \
 curl gnupg software-properties-common apt-transport-https \
 nano wget nginx sqlite3 mediainfo libchromaprint-tools \
 nginx-extras supervisor procps ca-certificates transmission-daemon \
-unzip gettext-base chromium chromium-common chromium-driver  xvfb dumb-init
+unzip gettext-base chromium chromium-common chromium-driver  xvfb dumb-init \
+nodejs npm
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get -qq clean
 RUN apt-get -qq autoremove -y

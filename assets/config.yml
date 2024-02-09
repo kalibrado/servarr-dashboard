@@ -92,3 +92,8 @@ services:
         logo: "/assets/jellyfin.png"
         url: "/jellyfin"
         target: "_blank"
+
+      - name: "Log.io"
+        logo: "/assets/logio.png"
+        url: "/logio"
+        target: "_blank"

@@ -12,9 +12,9 @@
 - [X] [Readarr](https://wiki.servarr.com/en/readarr)
 - [X] [Transmission](https://transmissionbt.com/)
 - [ ] [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
+- [ ] [log.io](https://github.com/NarrativeScience-old/log.io)
 - [ ] OpenVpn
 - [ ] Fail2Ban
-
 
 ## Here is the full list of paths for each service
 

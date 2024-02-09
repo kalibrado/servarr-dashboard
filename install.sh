@@ -11,6 +11,9 @@ fi
 
 SERVARR_APP_PATH=${SERVARR_APP_PATH:='/opt'}
 SERVARR_CONFIG_PATH=${SERVARR_CONFIG_PATH:="/config"}
+SERVARR_LOGS_PATH=${SERVARR_LOGS_PATH:="/var/log"}
+LOGIO_FILE_INPUT_CONFIG_PATH=${LOGIO_FILE_INPUT_CONFIG_PATH:="$SERVARR_CONFIG_PATH/logio/settings.json"}
+
 TRANSMISSION_DOWNLOADS_PATH=${TRANSMISSION_DOWNLOADS_PATH:="/media/downloads"}
 USER_APP=${USER:='root'}
 EXEC_TYPE=${1:="full"}
@@ -34,7 +37,7 @@ JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin/config
 JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_PATH/Jellyfin/Cache"}
 JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_CONFIG_PATH/Jellyfin"}
 
-PACKAGES=(curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
+PACKAGES=(nodejs npm curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
 
 if [[ "$EXEC_TYPE" == "full" ]]; then
     echo "--> Update systeme..."
@@ -140,6 +143,33 @@ function Prowlarr() {
     __get_app "Prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Prowlarr"
     return
+}
+
+function LogIO(){
+    echo "--> Create config log.io"
+cat <<EOF > $LOGIO_FILE_INPUT_CONFIG_PATH/settings.json
+{
+  "messageServer": {
+    "host": "127.0.0.1",
+    "port": 6689
+  },
+  "inputs": [
+    {
+      "source": "servarr-dashboard",
+      "stream": "system-logs",
+      "config": {
+        "path": "$SERVARR_LOGS_PATH/**/*.log",
+        "watcherOptions": {
+          "ignored": "*.txt",
+          "depth": 99,
+        }
+      }
+    }
+  ]
+}
+EOF
+    echo "--> Install log.io"
+    npm install -g log.io
 }
 
 function Jellyfin() {
