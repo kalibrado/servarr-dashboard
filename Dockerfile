@@ -14,7 +14,7 @@ ENV TRANSMISSION_INCOMPLETED_DIR="/media/downloads/incompleted"
 ENV RPC_PASSWORD="transmission"
 ENV RPC_USERNAME='transmission'
 ENV RPC_AUTH_REQUIRED=true
-q
+
 ARG DEBIAN_FRONTEND=noninteractive
 
 COPY setup.sh /setup.sh
