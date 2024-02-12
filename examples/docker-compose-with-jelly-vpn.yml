@@ -1,0 +1,83 @@
+version: "4"
+
+services:
+  jellyfin:
+    container_name: jellyfin
+    image: lscr.io/linuxserver/jellyfin
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - /mnt:/media
+      - /AppData/jellyfin/config:/config
+    group_add:
+      - "104" 
+    devices:
+      - /dev/dri/:/dev/dri/ # Optional for transcoding
+    ports:
+      - 8096:8096 #HTTP webUI
+      - 8920:8920 #HTTPS webUI
+      - 7359:7359/udp #optional. Allows clients to discover Jellyfin on the local network.
+      - 1900:1900/udp #optional. Service discovery used by DNLA and clients.
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr
+    container_name: jellyseerr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=info #optional 
+      - TZ=UTC
+    volumes:
+      - /AppData/jellyseerr/:/app/config
+    hostname: jellyseerr 
+    ports:
+      - 5055:5055
+    depends_on: 
+      - servarr-dashboard
+
+  servarr-dashboard:
+    container_name: servarr-dashboard
+    image: ldfe/servarr-dashboard
+    restart: unless-stopped
+    environment:
+      - SERVARR_THEME="overseerr" # set this to change theme in app *arrs look -> https://docs.theme-park.dev/themes/sonarr/
+      - TRANSMISSION_AUTH="true" # enable or not auth methode in tranmission
+      - TRANSMISSION_USER="transmission" # user tranmission
+      - TRANSMISSION_PASS="transmission" # pass tranmission
+    volumes:
+      - /AppData/servarr-dashboard:/servarr-dashboard # optional
+      - /mnt:/media/downloads # optional
+    network_mode: "service:gluetun"
+    depends_on:
+      gluetun:
+        condition: service_started
+        restart: true
+        required: true
+
+  gluetun:
+    image: qmcgaw/gluetun:v3
+    container_name: gluetun
+    hostname: gluetun 
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - /AppData/gluetun:/gluetun
+    networks: 
+      - servarr 
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+      - UPDATER_PERIOD=24h
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
+      - OPENVPN_USER=${OPENVPN_USER}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+    ports:
+     - 51413:51413
+     - 80:80 # Port Web UI servarr-dashboard
+     - 33242:33242/tcp  # Transmission Torrent Port TCP
+     - 33242:33242/udp  # Transmission Torrent Port UDP 
