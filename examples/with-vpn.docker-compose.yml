@@ -11,11 +11,8 @@ services:
       - TRANSMISSION_USER="transmission" # default user tranmission
       - TRANSMISSION_PASS="transmission" # default pass tranmission
     volumes:
-      - /opt/servarr/config:/config
-      - /opt/servarr/nginx:/etc/nginx
-      - /opt/servarr/app:/srv
-      - /opt/servarr/logs:/var/log 
-      - /opt/servarr/downloads:/media/downloads
+      - /opt/servarr-dashboard:/servarr-dashboard # optional
+      - /media:/media/downloads # optional
     network_mode: "service:gluetun"
     depends_on:
       gluetun:

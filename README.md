@@ -100,3 +100,18 @@ services:
       - 33242:33242/tcp  # Transmission Torrent Port TCP
       - 33242:33242/udp  # Transmission Torrent Port UDP 
 ```
+
+## Local use
+
+```bash
+
+# clone repo
+git clone 
+
+# in the path 
+chmod +x setup.sh
+
+# run this scrip
+bash setup.sh
+
+```

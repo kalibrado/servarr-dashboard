@@ -11,11 +11,8 @@ services:
       - TRANSMISSION_USER="transmission" # user tranmission
       - TRANSMISSION_PASS="transmission" # pass tranmission
     volumes:
-      - /opt/servarr/config:/config # optional
-      - /opt/servarr/nginx:/etc/nginx # optional
-      - /opt/servarr/app:/srv # optional
-      - /opt/servarr/logs:/var/log  # optional
-      - /opt/servarr/downloads:/media/downloads # optional
+      - /opt/servarr-dashboard:/servarr-dashboard # optional
+      - /media:/media/downloads # optional
     ports:
       - 80:80 # Servarr Dashboard Port
       - 33242:33242/tcp  # Transmission Torrent Port TCP
