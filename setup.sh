@@ -31,9 +31,9 @@ fi
 
 WORKDIR=${WORKDIR:="/srv/servarr-dashboard"}
 
-SERVARR_APP_DIR=${SERVARR_APP_DIR:="/$WORKDIR/app"}
-SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="/$WORKDIR/config"}
-SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="/$WORKDIR/log"}
+SERVARR_APP_DIR=${SERVARR_APP_DIR:="$WORKDIR/app"}
+SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="$WORKDIR/config"}
+SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="$WORKDIR/log"}
 SERVARR_THEME=${SERVARR_THEME:="overseerr"}
 
 JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_APP_DIR/Jellyfin/data"}
@@ -222,7 +222,6 @@ function prowlarr() {
     fi
 }
 
-
 function transmission() {
     echo "--------------------------------------------------------------"
     echo "👉 Create $TRANSMISSION_COMPLETED_DIR "
@@ -267,8 +266,6 @@ function jellyfin() {
     echo "  👉 Link jellyfin-web"
     ln -s /usr/share/jellyfin/web/ /usr/lib/jellyfin/bin/jellyfin-web
 }
-
-
 
 function Install_All() {
     echo "--------------------------------------------------------------"
