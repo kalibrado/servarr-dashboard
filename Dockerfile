@@ -35,4 +35,12 @@ EXPOSE 51413/tcp
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
+RUN mkdir -p $SERVARR_LOG_DIR/prowlarr 
+RUN mkdir -p $SERVARR_LOG_DIR/radarr 
+RUN mkdir -p $SERVARR_LOG_DIR/sonnar
+RUN mkdir -p $SERVARR_LOG_DIR/lidarr
+RUN mkdir -p $SERVARR_LOG_DIR/readarr
+RUN mkdir -p $SERVARR_LOG_DIR/transmission
+RUN mkdir -p $SERVARR_LOG_DIR/nginx
+
 CMD ["/usr/bin/supervisord"]

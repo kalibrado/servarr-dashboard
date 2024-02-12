@@ -39,14 +39,6 @@ Change the 'localhost' based on your IP address or domain name
 
 ## Screenshots
 
-![Alt text](image.png)
-![Alt text](image-2.png)
-![Alt text](image-3.png)
-![Alt text](image-4.png)
-![Alt text](image-5.png)
-![Alt text](image-6.png)
-![Alt text](image-7.png)
-
 ## Source
 
 - Nginx => https://www.nginx.com/
