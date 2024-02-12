@@ -3,7 +3,6 @@
 ## Here are the services that are currently operational
 
 - [X] [Nginx (reverse proxy)](https://www.nginx.com/)
-- [ ] [Jellyfin](https://jellyfin.org/)
 - [X] [Homer](https://github.com/bastienwirtz/homer)
 - [X] [Prowlarr](https://wiki.servarr.com/en/prowlarr)
 - [X] [Sonarr](https://wiki.servarr.com/en/sonarr)
@@ -11,9 +10,7 @@
 - [X] [Lidarr](https://wiki.servarr.com/en/lidarr)
 - [X] [Readarr](https://wiki.servarr.com/en/readarr)
 - [X] [Transmission](https://transmissionbt.com/)
-- [ ] [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
-- [ ] [log.io](https://github.com/NarrativeScience-old/log.io)
-- [ ] OpenVpn
+- [X] [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
 - [ ] Fail2Ban
 
 ## Here is the full list of paths for each service
@@ -28,7 +25,6 @@ Change the 'localhost' based on your IP address or domain name
 - Readarr => <http://localhost/readarr>
 - Transmission => <http://localhost/transmission>
 - FlareSolverr => <http://localhost/flaresolverr>
-
 
 ## Use with Docker
   
@@ -48,11 +44,8 @@ services:
       - TRANSMISSION_USER="transmission" # user tranmission
       - TRANSMISSION_PASS="transmission" # pass tranmission
     volumes:
-      - /opt/servarr/config:/config # optional
-      - /opt/servarr/nginx:/etc/nginx # optional
-      - /opt/servarr/app:/srv # optional
-      - /opt/servarr/logs:/var/log  # optional
-      - /opt/servarr/downloads:/media/downloads # optional
+      - /opt/servarr-dashboard:/servarr-dashboard # optional
+      - /media:/media/downloads # optional
     ports:
       - 80:80 # Servarr Dashboard Port
       - 33242:33242/tcp  # Transmission Torrent Port TCP
@@ -75,11 +68,8 @@ services:
       - TRANSMISSION_USER="transmission" # default user tranmission
       - TRANSMISSION_PASS="transmission" # default pass tranmission
     volumes:
-      - /opt/servarr/config:/config
-      - /opt/servarr/nginx:/etc/nginx
-      - /opt/servarr/app:/srv
-      - /opt/servarr/logs:/var/log 
-      - /opt/servarr/downloads:/media/downloads
+      - /opt/servarr-dashboard:/servarr-dashboard # optional
+      - /media:/media/downloads # optional
     network_mode: "service:gluetun"
     depends_on:
       gluetun:

@@ -16,7 +16,7 @@ cat << EOF
 #                                 |  O  ||___, |        |     \|  _  ||     | |  | |  O  ||    \ |  _  ||     ||     |    #
 #                                 |     ||     |        |  .  ||  |  ||     | |  | |     ||  .  \|  |  ||     ||     |    #
 #                                 |_____||____/         |__|\_||__|__||_____||____||_____||__|\_||__|__||_____| \___/     #
-#-------------------------------------------------------------------------------------------------------------------------#                                                                                                                                                                                                                                                                                              
+#-------------------------------------------------------------------------------------------------------------------------#
 EOF
 ############################################################
 # Need root for running this                               #
@@ -35,11 +35,6 @@ SERVARR_APP_DIR=${SERVARR_APP_DIR:="$WORKDIR/app"}
 SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="$WORKDIR/config"}
 SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="$WORKDIR/log"}
 SERVARR_THEME=${SERVARR_THEME:="overseerr"}
-
-JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_APP_DIR/Jellyfin/data"}
-JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONF_DIR/Jellyfin/config"}
-JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_DIR/Jellyfin/cache"}
-JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_LOG_DIR/Jellyfin"}
 
 TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/completed"}
 TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
@@ -242,31 +237,6 @@ function transmission() {
     fi
 }
 
-function jellyfin() {
-    echo "--------------------------------------------------------------"
-
-    if [[ "$exec_type" == "full" ]]; then
-        packages=('ca-certificates' 'apt-transport-https' 'gnupg')
-        __install_packages "${packages[@]}"
-    fi
-
-    echo "  👉 Import Jellyfin Media Server APT Repositories"
-    curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --dearmor -o /usr/share/keyrings/jellyfin.gpg >/dev/null
-  
-    echo "  👉 Stable Jellyfin Version"
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/jellyfin.gpg] https://repo.jellyfin.org/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/jellyfin.list
-    
-    echo "  👉 Updating APT repositories."
-    apt update
-
-    echo "  👉 Installing Jellyfin"
-    packages=('jellyfin')
-    __install_packages "${packages[@]}"
-
-    echo "  👉 Link jellyfin-web"
-    ln -s /usr/share/jellyfin/web/ /usr/lib/jellyfin/bin/jellyfin-web
-}
-
 function Install_All() {
     echo "--------------------------------------------------------------"
     echo "👉 Install all apps"
@@ -279,7 +249,6 @@ function Install_All() {
         lidarr &
         homer &
         flareSolverr &
-        jellyfin &
         transmission &
         wait
     else
@@ -290,7 +259,6 @@ function Install_All() {
         lidarr
         homer
         flareSolverr
-        jellyfin
         transmission 
     fi
 
@@ -328,6 +296,9 @@ function start() {
             $app
         done
     fi
+
+    echo "👉 Create $SERVARR_LOG_DIR/nginx/"
+    mkdir -p "$SERVARR_LOG_DIR/nginx/"
 }
 
 ############################################################
