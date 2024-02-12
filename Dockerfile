@@ -1,11 +1,13 @@
 FROM debian
 
-ENV SERVARR_APP_DIR='/servarr'
-ENV SERVARR_CONF_DIR="/config"
-ENV SERVARR_LOG_DIR="/var/log"
+ENV WORKDIR="/servarr-dashboard"
 ENV SERVARR_THEME="overseerr"
 
-ENV JELLYFIN_DATA_DIR="$SERVARR_CONF_DIR/Jellyfin/data"
+ENV SERVARR_APP_DIR="/$WORKDIR/app"
+ENV SERVARR_CONF_DIR="/$WORKDIR/config"
+ENV SERVARR_LOG_DIR="/$WORKDIR/log"
+
+ENV JELLYFIN_DATA_DIR="$SERVARR_APP_DIR/Jellyfin/data"
 ENV JELLYFIN_CONFIG_DIR="$SERVARR_CONF_DIR/Jellyfin/config"
 ENV JELLYFIN_LOG_DIR="$SERVARR_LOG_DIR/Jellyfin"
 
@@ -26,11 +28,12 @@ COPY transmission/ $SERVARR_CONF_DIR/Transmission/
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY assets/ $SERVARR_APP_DIR/Homer/assets/
 COPY assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
- 
-VOLUME "/etc/nginx/" 
-VOLUME $SERVARR_CONF_DIR
-VOLUME $SERVARR_APP_DIR
-VOLUME $TRANSMISSION_COMPLETED_DIR 
+COPY fail2ban/ /etc/fail2ban/
+
+
+VOLUME "/etc/nginx/"
+VOLUME "/media/downloads"
+VOLUME $WORKDIR  
 
 EXPOSE 80/tcp
 EXPOSE 51413/tcp

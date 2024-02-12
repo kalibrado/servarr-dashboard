@@ -28,15 +28,18 @@ fi
 ############################################################
 # Variables                                                #
 ############################################################
-SERVARR_APP_DIR=${SERVARR_APP_DIR:='/servarr'}
-SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="/config"}
-SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="/var/log"}
+
+WORKDIR=${WORKDIR:="/srv/servarr-dashboard"}
+
+SERVARR_APP_DIR=${SERVARR_APP_DIR:="/$WORKDIR/app"}
+SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="/$WORKDIR/config"}
+SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="/$WORKDIR/log"}
 SERVARR_THEME=${SERVARR_THEME:="overseerr"}
 
-JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_CONF_DIR/Jellyfin/data"}
+JELLYFIN_DATA_DIR=${JELLYFIN_DATA_DIR:="$SERVARR_APP_DIR/Jellyfin/data"}
 JELLYFIN_CONFIG_DIR=${JELLYFIN_CONFIG_DIR:="$SERVARR_CONF_DIR/Jellyfin/config"}
-JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_DIR/Jellyfin/Cache"}
-JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_CONF_DIR/Jellyfin"}
+JELLYFIN_CACHE_DIR=${JELLYFIN_CACHE_DIR:="$SERVARR_APP_DIR/Jellyfin/cache"}
+JELLYFIN_LOG_DIR=${JELLYFIN_LOG_DIR:="$SERVARR_LOG_DIR/Jellyfin"}
 
 TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/completed"}
 TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
@@ -219,6 +222,7 @@ function prowlarr() {
     fi
 }
 
+
 function transmission() {
     echo "--------------------------------------------------------------"
     echo "👉 Create $TRANSMISSION_COMPLETED_DIR "
@@ -264,6 +268,8 @@ function jellyfin() {
     ln -s /usr/share/jellyfin/web/ /usr/lib/jellyfin/bin/jellyfin-web
 }
 
+
+
 function Install_All() {
     echo "--------------------------------------------------------------"
     echo "👉 Install all apps"
@@ -301,9 +307,9 @@ function start() {
     apt-get -qq update
 
     echo "👉 Install packages"
-    packages=('apt-utils' 'nano' 'nginx' 'nginx-extras' 'supervisor' 'procps'  'unzip' 'git' 'curl')
+    packages=(fail2ban, 'apt-utils' 'nano' 'nginx' 'nginx-extras' 'supervisor' 'procps'  'unzip' 'git' 'curl')
     if [[ "$exec_type" == "docker" ]]; then
-        packages=(apt-utils curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
+        packages=(fail2ban apt-utils curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
     fi
     __install_packages "${packages[@]}"
 

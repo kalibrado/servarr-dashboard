@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo "--> Setup UFW"
+ufw allow 80/tcp comment "HTTP Port"
+ufw allow 443/tcp commnet "HTTPS Ports"
+ufw enable
+
 echo "--> Update Nginx conf"
 envsubst '$SERVARR_THEME $SERVARR_APP_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
 
