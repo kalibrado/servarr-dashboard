@@ -43,6 +43,9 @@ echo "--> Create $SERVARR_LOG_DIR/transmission"
 mkdir -p $SERVARR_LOG_DIR/transmission
 echo "--> Create $SERVARR_LOG_DIR/nginx"
 mkdir -p $SERVARR_LOG_DIR/nginx
+echo "--> Create $SERVARR_LOG_DIR/flaresolverr"
+mkdir -p $SERVARR_LOG_DIR/flaresolverr
+
 
 echo "--> Update Nginx conf"
 wget -q https://raw.githubusercontent.com/kalibrado/servarr-dashboard/main/nginx/init-nginx.conf --no-check-certificate --content-disposition
