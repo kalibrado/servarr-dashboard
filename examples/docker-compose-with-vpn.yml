@@ -43,5 +43,5 @@ services:
     ports:
      - 80:80 # Port Web UI servarr-dashboard
      - 51413:51413 # Port Gluetun
-     - 33242:33242/tcp  # Transmission Torrent Port TCP
-     - 33242:33242/udp  # Transmission Torrent Port UDP 
+     - 33242:33242/tcp  # transmission Torrent Port TCP
+     - 33242:33242/udp  # transmission Torrent Port UDP 

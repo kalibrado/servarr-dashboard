@@ -229,12 +229,12 @@ function transmission() {
     echo "  👉 Create $SERVARR_LOG_DIR/transmission"
     mkdir -p "$SERVARR_LOG_DIR/transmission"
 
-    echo "  👉 Install Transmission daemon"
+    echo "  👉 Install transmission daemon"
     if [[ "$exec_type" == "full" ]]; then
         packages=('transmission-daemon')
         __install_packages "${packages[@]}"
         echo "  👉 Copie transmission config"
-        ./transmission/ $SERVARR_CONF_DIR/Transmission/
+        ./transmission/ $SERVARR_CONF_DIR/transmission/
     fi
 }
 
