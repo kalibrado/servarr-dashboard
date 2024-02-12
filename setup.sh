@@ -108,7 +108,8 @@ function __set_app() {
     echo "  👉 Autorisation $app in $SERVARR_APP_DIR/$app"
     chown "$user_app":"$user_app" -R "$SERVARR_APP_DIR/$app"
 
-    "$SERVARR_APP_DIR/$app/$app" -nobrowser -data="$SERVARR_CONF_DIR/$app" &
+    "$SERVARR_APP_DIR/$app/$app" -nobrowser -data="$SERVARR_CONF_DIR/$app" >/dev/null &
+    sleep 5s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "$SERVARR_CONF_DIR/$app/config.xml"
     pkill -f "$SERVARR_APP_DIR/$app/$app"
     return
