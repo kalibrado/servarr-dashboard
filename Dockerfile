@@ -15,14 +15,6 @@ ENV RPC_AUTH_REQUIRED=true
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN mkdir -p $SERVARR_LOG_DIR/prowlarr 
-RUN mkdir -p $SERVARR_LOG_DIR/radarr 
-RUN mkdir -p $SERVARR_LOG_DIR/sonnar
-RUN mkdir -p $SERVARR_LOG_DIR/lidarr
-RUN mkdir -p $SERVARR_LOG_DIR/readarr
-RUN mkdir -p $SERVARR_LOG_DIR/transmission
-RUN mkdir -p $SERVARR_LOG_DIR/nginx
-
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
 RUN bash /setup.sh -t docker
@@ -40,9 +32,7 @@ VOLUME $WORKDIR
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
 
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-
-
-CMD ["/usr/bin/supervisord"]
+ENTRYPOINT [ "bash", "/entrypoint.sh"]
