@@ -33,8 +33,8 @@ echo "--> Create $SERVARR_LOG_DIR/prowlarr"
 mkdir -p $SERVARR_LOG_DIR/prowlarr 
 echo "--> Create $SERVARR_LOG_DIR/radarr"
 mkdir -p $SERVARR_LOG_DIR/radarr 
-echo "--> Create $SERVARR_LOG_DIR/sonnar"
-mkdir -p $SERVARR_LOG_DIR/sonnar
+echo "--> Create $SERVARR_LOG_DIR/sonarr"
+mkdir -p $SERVARR_LOG_DIR/sonarr
 echo "--> Create $SERVARR_LOG_DIR/lidarr"
 mkdir -p $SERVARR_LOG_DIR/lidarr
 echo "--> Create $SERVARR_LOG_DIR/readarr"
