@@ -32,11 +32,6 @@ SERVARR_APP_DIR=${SERVARR_APP_DIR:="$WORKDIR/app"}
 SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="$WORKDIR/config"}
 SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="$WORKDIR/log"}
 SERVARR_THEME=${SERVARR_THEME:="overseerr"}
-TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/completed"}
-TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
-RPC_PASSWORD=${RPC_PASSWORD:='transmission'}
-RPC_USERNAME=${RPC_USERNAME:='transmission'}
-RPC_AUTH_REQUIRED=${RPC_AUTH_REQUIRED:=true}
 FLARESOLVERR_VERSION=${FLARESOLVERR_VERSION:="v3.3.13"}
 FLARESOLVERR_LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:="info"}
 FLARESOLVERR_LOG_HTML=${FLARESOLVERR_LOG_HTML:="false"}
@@ -116,10 +111,6 @@ function homer() {
     echo "--> Create $SERVARR_APP_DIR/homer"
     mkdir -p "$SERVARR_APP_DIR/homer"
     __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" --content-disposition "zipfile"
-    echo "--> Copie assets  $SERVARR_APP_DIR/homer/assets/"
-    cp /repo/assets/ $SERVARR_APP_DIR/homer/assets/
-    cp /repo/assets/servarr.png $SERVARR_APP_DIR/homer/assets/icons/favicon.ico
-
 }
 function readarr() {
     __get_app "Readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
@@ -141,16 +132,7 @@ function prowlarr() {
     __get_app "Prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "prowlarr"
 }
-function transmission() {
-    echo "--> Create $TRANSMISSION_COMPLETED_DIR "
-    mkdir -p "$TRANSMISSION_COMPLETED_DIR"
-    echo "--> Create $TRANSMISSION_INCOMPLETED_DIR"
-    mkdir -p "$TRANSMISSION_INCOMPLETED_DIR"
-    echo "--> Create $SERVARR_LOG_DIR/transmission"
-    mkdir -p "$SERVARR_LOG_DIR/transmission"
-    echo "--> Copie transmission config"
-    cp /repo/transmission/ $SERVARR_CONF_DIR/transmission/
-}
+
 function Install_All() {
     echo "--> Install all apps"
     prowlarr &
@@ -159,7 +141,6 @@ function Install_All() {
     sonarr &
     lidarr &
     homer &
-    transmission &
     flareSolverr &
     wait
 }
@@ -176,18 +157,6 @@ function start() {
     echo "--> Autoremove"
     apt-get -qq autoremove -y
 
-    echo "--> Clone repo for last update"
-    git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo
-
-    echo "--> Copie config Nginx"
-    cp -R /repo/nginx/ /etc/nginx/
-
-    echo "--> Copie config fail2ban"
-    cp -R /repo/fail2ban/ /etc/fail2ban/
-
-    echo "--> Copie supervisord.conf"
-    cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
     if [[ $Apps == "all" ]]; then
         Install_All 
     else
@@ -197,9 +166,6 @@ function start() {
             $app
         done
     fi
-
-    echo "--> Remove repo"
-    rm -rf /repo
 }
 ############################################################
 # Process the input options.                               #
