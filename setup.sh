@@ -59,9 +59,18 @@ FLARESOLVERR_PROMETHEUS_PORT=${FLARESOLVERR_PROMETHEUS_PORT:="8192"}
 user_app=${USER:='root'}
 exec_type="full"
 Apps="all"
-
+packages=( 
+git fail2ban apt-utils
+curl software-properties-common apt-transport-https 
+nano wget nginx 
+sqlite3 mediainfo libchromaprint-tools 
+nginx-extras supervisor procps 
+ca-certificates transmission-daemon unzip 
+gettext-base chromium chromium-common 
+chromium-driver xvfb dumb-init
+)
 ############################################################
-# Help                                                     #
+# Help                                                    #
 ############################################################
 Help() {
     echo "--------------------------------------------------------------"
@@ -162,60 +171,36 @@ function flareSolverr() {
     echo " 👉 Create $SERVARR_LOG_DIR/flaresolverr"
     mkdir -p "$SERVARR_LOG_DIR/flaresolverr"
 
-    if [[ "$exec_type" == "full" ]]; then
-        packages=('gettext-base' 'chromium' 'chromium-common' 'chromium-driver' 'xvfb' 'dumb-init')
-        __install_packages "${packages[@]}"
-    fi
 }
 
 function readarr() {
     echo "--------------------------------------------------------------"
     __get_app "Readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Readarr"
-    if [[ "$exec_type" == "full" ]]; then
-        packages=("sqlite3")
-        __install_packages "${packages[@]}"
-    fi
 }
 
 function radarr() {
     echo "--------------------------------------------------------------"
     __get_app "Radarr" 'http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Radarr"
-    if [[ "$exec_type" == "full" ]]; then
-        packages=("sqlite3")
-        __install_packages "${packages[@]}"
-    fi
 }
 
 function sonarr() {
     echo "--------------------------------------------------------------"
     __get_app "Sonarr" 'http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Sonarr"
-    if [[ "$exec_type" == "full" ]]; then
-        packages=("sqlite3" "wget")
-        __install_packages "${packages[@]}"
-    fi
 }
 
 function lidarr() {
     echo "--------------------------------------------------------------"
     __get_app "Lidarr" 'http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Lidarr"
-    if [[ "$exec_type" == "full" ]]; then
-        packages=("mediainfo" "sqlite3" 'libchromaprint-tools')
-        __install_packages "${packages[@]}"
-    fi
 }
 
 function prowlarr() {
     echo "--------------------------------------------------------------"
     __get_app "Prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "Prowlarr"
-    if [[ "$exec_type" == "full" ]]; then
-        packages=("sqlite3")
-        __install_packages "${packages[@]}"
-    fi
 }
 
 function transmission() {
@@ -231,8 +216,6 @@ function transmission() {
 
     echo "  👉 Install transmission daemon"
     if [[ "$exec_type" == "full" ]]; then
-        packages=('transmission-daemon')
-        __install_packages "${packages[@]}"
         echo "  👉 Copie transmission config"
         ./transmission/ $SERVARR_CONF_DIR/transmission/
     fi
@@ -241,28 +224,15 @@ function transmission() {
 function Install_All() {
     echo "--------------------------------------------------------------"
     echo "👉 Install all apps"
-    if [[ "$exec_type" == "docker" ]]; then
-        echo "  👉 Run install in thread mode for best performance"
-        prowlarr &
-        readarr &
-        radarr &
-        sonarr &
-        lidarr &
-        homer &
-        flareSolverr &
-        transmission &
-        wait
-    else
-        prowlarr
-        readarr
-        radarr
-        sonarr
-        lidarr
-        homer
-        flareSolverr
-        transmission 
-    fi
-
+    prowlarr &
+    readarr &
+    radarr &
+    sonarr &
+    lidarr &
+    homer &
+    flareSolverr &
+    transmission &
+    wait
 }
 
 function start() {
@@ -273,10 +243,6 @@ function start() {
     apt-get -qq update
 
     echo "👉 Install packages"
-    packages=(fail2ban, 'apt-utils' 'nano' 'nginx' 'nginx-extras' 'supervisor' 'procps'  'unzip' 'git' 'curl')
-    if [[ "$exec_type" == "docker" ]]; then
-        packages=(fail2ban apt-utils curl software-properties-common apt-transport-https gnupg nano wget nginx sqlite3 mediainfo libchromaprint-tools nginx-extras supervisor procps ca-certificates transmission-daemon unzip gettext-base chromium chromium-common chromium-driver xvfb dumb-init)
-    fi
     __install_packages "${packages[@]}"
 
     echo "👉 rm apt/lists/*"
@@ -297,9 +263,6 @@ function start() {
             $app
         done
     fi
-
-    echo "👉 Create $SERVARR_LOG_DIR/nginx/"
-    mkdir -p "$SERVARR_LOG_DIR/nginx/"
 }
 
 ############################################################
