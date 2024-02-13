@@ -28,7 +28,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
-RUN bash /setup.sh -t docker
 
 VOLUME "/media/downloads"
 VOLUME $WORKDIR  
@@ -36,7 +35,5 @@ VOLUME $WORKDIR
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT [ "bash", "/entrypoint.sh"]
+ENTRYPOINT [ "bash", "/setup.sh"]

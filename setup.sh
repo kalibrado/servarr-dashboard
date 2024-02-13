@@ -46,27 +46,12 @@ FLARESOLVERR_HOST=${FLARESOLVERR_HOST:="0.0.0.0"}
 FLARESOLVERR_PROMETHEUS_ENABLED=${FLARESOLVERR_PROMETHEUS_ENABLED:="false"}
 FLARESOLVERR_PROMETHEUS_PORT=${FLARESOLVERR_PROMETHEUS_PORT:="8192"}
 user_app=${USER:='root'}
-exec_type="full"
-Apps="all"
 packages=(
     git fail2ban nano wget unzip curl apt-transport-https gettext-base
     nginx nginx-extras sqlite3 mediainfo libchromaprint-tools 
     supervisor procps ca-certificates transmission-daemon 
     chromium chromium-common chromium-driver xvfb dumb-init 
 )
-############################################################
-# Help                                                    #
-############################################################
-Help() {
-    echo "Using the installation script to automate Servarr-Dashboard"
-    echo "Syntax: setup.sh [-t|a|h]"
-    echo "options:"
-    echo "-t    The -t argument is the execution type: docker or full by default it is full "
-    echo "-a    The -a argument supports a string of application to install separated by semicolons if it is not specified by default all"
-    echo "-h    Print this Help."
-    echo "Here is an example of using the script to install full and only the radarr and sonarr applications"
-    echo "bash setup.sh -t full -a 'radarr;sonarr'"
-}
 ############################################################
 # Main program                                             #
 ############################################################
@@ -157,47 +142,73 @@ function start() {
     echo "--> Autoremove"
     apt-get -qq autoremove -y
 
-    if [[ $Apps == "all" ]]; then
-        Install_All 
-    else
-        apps=$(echo "$Apps" | tr '[:upper:]' '[:lower:]')
-        export IFS=";"
-        for app in $apps; do
-            $app
-        done
-    fi
+    Install_All 
+
+    echo "--> Clone repo for last update"
+    git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo
+
+    echo "--> Copie config Nginx"
+    cp -R /repo/nginx/ /etc/nginx/
+
+    echo "--> Copie config fail2ban"
+    cp -R /repo/fail2ban/ /etc/fail2ban/
+
+    echo "--> Copie supervisord.conf"
+    cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+    echo "--> Create $SERVARR_APP_DIR"
+    mkdir -p $SERVARR_APP_DIR
+    echo "--> Create $SERVARR_CONF_DIR"
+    mkdir -p $SERVARR_CONF_DIR
+
+    echo "--> Create $SERVARR_LOG_DIR"
+    mkdir -p $SERVARR_LOG_DIR
+    echo "--> Create $SERVARR_LOG_DIR/prowlarr"
+    mkdir -p $SERVARR_LOG_DIR/prowlarr 
+    echo "--> Create $SERVARR_LOG_DIR/radarr"
+    mkdir -p $SERVARR_LOG_DIR/radarr 
+    echo "--> Create $SERVARR_LOG_DIR/sonarr"
+    mkdir -p $SERVARR_LOG_DIR/sonarr
+    echo "--> Create $SERVARR_LOG_DIR/lidarr"
+    mkdir -p $SERVARR_LOG_DIR/lidarr
+    echo "--> Create $SERVARR_LOG_DIR/readarr"
+    mkdir -p $SERVARR_LOG_DIR/readarr
+    echo "--> Create $SERVARR_LOG_DIR/transmission"
+    mkdir -p $SERVARR_LOG_DIR/transmission
+    echo "--> Create $SERVARR_LOG_DIR/nginx"
+    mkdir -p $SERVARR_LOG_DIR/nginx
+    echo "--> Create $SERVARR_LOG_DIR/flaresolverr"
+    mkdir -p $SERVARR_LOG_DIR/flaresolverr
+
+    echo "--> Copie nginx conf.d  /etc/nginx/"
+    cp -R /repo/nginx/** /etc/nginx/
+    echo "--> Update Nginx conf"
+    envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
+
+    echo "--> Setup settings transmission"
+    echo "--> Create $SERVARR_CONF_DIR/transmission"
+    mkdir -p $SERVARR_CONF_DIR/transmission
+    echo "--> Create $TRANSMISSION_COMPLETED_DIR "
+    mkdir -p "$TRANSMISSION_COMPLETED_DIR"
+    echo "--> Create $TRANSMISSION_INCOMPLETED_DIR"
+    mkdir -p "$TRANSMISSION_INCOMPLETED_DIR"
+    echo "--> Create $SERVARR_LOG_DIR/transmission"
+    mkdir -p "$SERVARR_LOG_DIR/transmission"
+    echo "--> Copie transmission config"
+    cp -R /repo/transmission/ $SERVARR_CONF_DIR/transmission/
+    envsubst '$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD' < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/transmission/settings.json"
+
+    echo "--> Create $SERVARR_APP_DIR/homer"
+    mkdir -p "$SERVARR_APP_DIR/homer"
+    echo "--> Copie assets  $SERVARR_APP_DIR/homer/assets/"
+    cp -R /repo/assets/** $SERVARR_APP_DIR/homer/assets/
+    cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/homer/assets/icons/favicon.ico
+
+    /usr/bin/supervisord
+
 }
-############################################################
-# Process the input options.                               #
-############################################################
-while getopts ":h:t:a:" option; do
-    case $option in
-        h) # display Help
-            Help
-            exit
-        ;;
-        t)
-            if [[ ("$OPTARG" == "docker" || "$OPTARG" == "full") ]]; then
-                exec_type=$OPTARG
-            else
-                echo "😢 Error: Invalid exec_type value"
-                exit 1
-            fi
-        ;;
-        a)
-            Apps=$OPTARG
-        ;;
-        \?)
-            echo "😢 Error: Invalid option"
-            exit
-        ;;
-    esac
-done
+
 ############################################################
 # Start script                                             #
 ############################################################
-if [[ $Apps && $exec_type ]]; then
-    start
-else
-    help
-fi
+start
