@@ -88,7 +88,7 @@ function __set_app() {
     pkill -f "$SERVARR_APP_DIR/$app_lower/$app"
 }
 function __get_app() {
-    app=${1^} # first char uppercase 
+    app=$1 # first char uppercase 
     url=$2
     extra=$3
     typefile=$4
@@ -109,36 +109,36 @@ function __get_app() {
         mv "$app" "$SERVARR_APP_DIR/$app_lower"
     fi
 }
+function flareSolverr() {
+    __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz"
+}
 function homer() {
     echo "--> Create $SERVARR_APP_DIR/homer"
     mkdir -p "$SERVARR_APP_DIR/homer"
-    __get_app "homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" --content-disposition "zipfile"
+    __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" --content-disposition "zipfile"
     echo "--> Copie assets  $SERVARR_APP_DIR/homer/assets/"
     cp /repo/assets/ $SERVARR_APP_DIR/homer/assets/
     cp /repo/assets/servarr.png $SERVARR_APP_DIR/homer/assets/icons/favicon.ico
 
 }
-function flareSolverr() {
-    __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" "-O Flaresolverr.tar.gz"
-}
 function readarr() {
-    __get_app "readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "readarr"
 }
 function radarr() {
-    __get_app "radarr" 'http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Radarr" 'http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "radarr"
 }
 function sonarr() {
-    __get_app "sonarr" 'http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Sonarr" 'http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "sonarr"
 }
 function lidarr() {
-    __get_app "lidarr" 'http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Lidarr" 'http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "lidarr"
 }
 function prowlarr() {
-    __get_app "prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "prowlarr"
 }
 function transmission() {
@@ -159,8 +159,8 @@ function Install_All() {
     sonarr &
     lidarr &
     homer &
-    flareSolverr &
     transmission &
+    flareSolverr &
     wait
 }
 function start() {
@@ -171,7 +171,7 @@ function start() {
     apt-get -qq update
 
     echo "--> Install packages ${packages[@]}"
-    apt-get -y install "${packages[@]}" 
+    apt-get -y install "${packages[@]}" --no-install-recommends
 
     echo "--> Autoremove"
     apt-get -qq autoremove -y
@@ -197,7 +197,7 @@ function start() {
             $app
         done
     fi
-    
+
     echo "--> Remove repo"
     rm -rf /repo
 }
