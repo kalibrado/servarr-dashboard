@@ -28,11 +28,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
-RUN bash /setup.sh
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 VOLUME "/media/downloads"
 VOLUME $WORKDIR  
 
 EXPOSE 80/tcp
 EXPOSE 51413/tcp
+RUN bash /setup.sh
 
 ENTRYPOINT [ "bash", "/start.sh"]

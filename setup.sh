@@ -17,7 +17,7 @@ SERVARR_THEME=${SERVARR_THEME:="overseerr"}
 TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/completed"}
 TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
 RPC_PASSWORD=${RPC_PASSWORD:="transmission"}
-RPC_USERNAME=${RPC_USERNAME:='transmission'}
+RPC_USERNAME=${RPC_USERNAME:="transmission"}
 RPC_AUTH_REQUIRED=${RPC_AUTH_REQUIRED:="true"}
 FLARESOLVERR_VERSION=${FLARESOLVERR_VERSION:="v3.3.13"}
 FLARESOLVERR_LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:="info"}
@@ -32,7 +32,7 @@ FLARESOLVERR_PORT=${FLARESOLVERR_PORT:="8191"}
 FLARESOLVERR_HOST=${FLARESOLVERR_HOST:="0.0.0.0"}
 FLARESOLVERR_PROMETHEUS_ENABLED=${FLARESOLVERR_PROMETHEUS_ENABLED:="false"}
 FLARESOLVERR_PROMETHEUS_PORT=${FLARESOLVERR_PROMETHEUS_PORT:="8192"}
-user_app=${USER:='root'}
+user_app=${USER:="root"}
 packages=(
     git fail2ban nano wget unzip curl apt-transport-https gettext-base
     nginx nginx-extras sqlite3 mediainfo libchromaprint-tools 
@@ -57,18 +57,17 @@ function __get_app() {
     app=$1
     url=$2
     extra=$3
-    typefile=$4
 
     echo "--> Donwload $app "
     wget -q --no-check-certificate "$extra" "$url" >/dev/null
-    if [[ "$typefile" == "zipfile" ]]; then
+    if [[ "$app" == "Homer" ]]; then
         echo "--> Extract zip file $app.zip in $SERVARR_APP_DIR/$app"
-        unzip -qqo "$app".zip -d "$SERVARR_APP_DIR/$app"
+        unzip -qqo $app.zip -d "$SERVARR_APP_DIR/$app"
         echo "--> Delete $app.zip"
         rm "$app".zip
     else
         echo "--> Extract $app*.tar.gz"
-        tar -xzf "$app"*.tar.gz
+        tar -xzf $app*.tar.gz
         echo "--> Delete $app*.tar.gz"
         rm "$app"*.tar.gz
         echo "--> Move $app $SERVARR_APP_DIR/$app"
@@ -76,31 +75,31 @@ function __get_app() {
     fi
 }
 function flareSolverr() {
-    __get_app "Flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" "-O Flaresolverr.tar.gz"
+    __get_app "Flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz -O Flaresolverr.tar.gz"
 }
 function homer() {
     echo "--> Create $SERVARR_APP_DIR/homer"
     mkdir -p "$SERVARR_APP_DIR/homer"
-    __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip " "-O Homer.zip" "zipfile"
+    __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip -O Homer.zip"
 }
 function readarr() {
-    __get_app "Readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
     __set_app "Readarr"
 }
 function radarr() {
-    __get_app "Radarr" 'http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Radarr" "http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
     __set_app "Radarr"
 }
 function sonarr() {
-    __get_app "Sonarr" 'http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Sonarr" "http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64" --content-disposition
     __set_app "Sonarr"
 }
 function lidarr() {
-    __get_app "Lidarr" 'http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Lidarr" "http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
     __set_app "Lidarr"
 }
 function prowlarr() {
-    __get_app "Prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
+    __get_app "Prowlarr" "http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
     __set_app "Prowlarr"
 }
 
