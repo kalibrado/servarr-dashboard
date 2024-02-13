@@ -56,7 +56,6 @@ function __set_app() {
 function __get_app() {
     app=$1
     url=$2
-    extra=$3
     echo "--> Donwload $app "
     wget -q --no-check-certificate $url -O $app.tar.gz
     echo "--> Extract $app.tar.gz"
