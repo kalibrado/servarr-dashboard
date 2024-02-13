@@ -67,39 +67,23 @@ Help() {
     echo "Using the installation script to automate Servarr-Dashboard"
     echo "Syntax: setup.sh [-t|a|h]"
     echo "options:"
-    echo "-t     The -t argument is the execution type: docker or full by default it is full "
-    echo "-a     The -a argument supports a string of application to install separated by semicolons if it is not specified by default all"
-    echo "-h     Print this Help."
+    echo "-t    The -t argument is the execution type: docker or full by default it is full "
+    echo "-a    The -a argument supports a string of application to install separated by semicolons if it is not specified by default all"
+    echo "-h    Print this Help."
     echo "Here is an example of using the script to install full and only the radarr and sonarr applications"
     echo "bash setup.sh -t full -a 'radarr;sonarr'"
 }
 ############################################################
 # Main program                                             #
 ############################################################
-function __install_packages() {
-    echo "--------------------------------------------------------------"
-    arr=("$@")
-    for i in "${arr[@]}"; do
-        if ! [ -x "$(command -v "$i")" ]; then
-            echo "--> installing $i"
-            apt-get -y -qq install "$i" >/dev/null
-        else
-            echo "  👌 $i already installed"
-        fi
-    done
-}
 function __set_app() {
     echo "--------------------------------------------------------------"
     app=${1^} # first char uppercase 
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
-
-    
     echo "--> Create $SERVARR_LOG_DIR/$app_lowe"
     mkdir -p "$SERVARR_LOG_DIR/$app_lower"
-    
     echo "--> Autorisation $app in $SERVARR_APP_DIR/$app_lower"
     chown "$user_app":"$user_app" -R "$SERVARR_APP_DIR/$app_lower"
-    
     "$SERVARR_APP_DIR/$app_lower/$app" -nobrowser -data="$SERVARR_CONF_DIR/$app_lower" >/dev/null &
     sleep 5s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app_lower</UrlBase>|g" "$SERVARR_CONF_DIR/$app_lower/config.xml"
@@ -112,7 +96,6 @@ function __get_app() {
     extra=$3
     typefile=$4
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
-
     echo "--> Donwload $app "
     wget -q --show-progress --no-check-certificate "$extra" "$url"
     if [[ "$typefile" == "zipfile" ]]; then
@@ -198,8 +181,8 @@ function start() {
     mkdir -p "$SERVARR_APP_DIR"
     echo "--> Update systeme"
     apt-get -qq update
-    echo "--> Install packages"
-    __install_packages "${packages[@]}"
+    echo "--> Install packages ${packages[@]}"
+    apt-get -y -qq install "${packages[@]}"
     echo "--> rm apt/lists/*"
     rm -rf /var/lib/apt/lists/*
     echo "--> Clean apt/lists"
