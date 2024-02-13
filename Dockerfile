@@ -19,13 +19,6 @@ COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh
 RUN bash /setup.sh -t docker
 
-COPY nginx/ /etc/nginx/
-COPY transmission/ $SERVARR_CONF_DIR/transmission/
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY assets/ $SERVARR_APP_DIR/Homer/assets/
-COPY assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
-COPY fail2ban/ /etc/fail2ban/
-
 VOLUME "/media/downloads"
 VOLUME $WORKDIR  
 
