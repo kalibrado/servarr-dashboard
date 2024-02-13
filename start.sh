@@ -1,18 +1,5 @@
 #!/bin/bash
-############################################################
-# Variables                                                #
-############################################################
-WORKDIR=${WORKDIR:="/srv/servarr-dashboard"}
-SERVARR_APP_DIR=${SERVARR_APP_DIR:="$WORKDIR/app"}
-SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="$WORKDIR/config"}
-SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="$WORKDIR/log"}
-SERVARR_THEME=${SERVARR_THEME:="overseerr"}
-TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/completed"}
-TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
-RPC_PASSWORD=${RPC_PASSWORD:="transmission"}
-RPC_USERNAME=${RPC_USERNAME:='transmission'}
-RPC_AUTH_REQUIRED=${RPC_AUTH_REQUIRED:="true"}
-
+set -e
 cat <<EOF
 #-------------------------------------------------------------------------------------------------------------------------#
 #   _____   ___  ____   __ __   ____  ____   ____          ___     ____   _____ __ __  ____    ___    ____  ____   ___    #
@@ -32,48 +19,69 @@ cat <<EOF
 #-------------------------------------------------------------------------------------------------------------------------#
 EOF
 
-echo "--> mkdir -p $SERVARR_APP_DIR"
-mkdir -p $SERVARR_APP_DIR
+############################################################
+# Variables                                                #
+############################################################
+WORKDIR=${WORKDIR:="/srv/servarr-dashboard"}
+SERVARR_APP_DIR=${SERVARR_APP_DIR:="$WORKDIR/app"}
+SERVARR_CONF_DIR=${SERVARR_CONF_DIR:="$WORKDIR/config"}
+SERVARR_LOG_DIR=${SERVARR_LOG_DIR:="$WORKDIR/log"}
+SERVARR_TMP_DIR=${SERVARR_TMP_DIR:="$WORKDIR/tmp"}
+SERVARR_THEME=${SERVARR_THEME:="overseerr"}
 
-echo "--> mkdir -p $SERVARR_CONF_DIR"
-mkdir -p $SERVARR_CONF_DIR
+TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/completed"}
+TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
+RPC_PASSWORD=${RPC_PASSWORD:="transmission"}
+RPC_USERNAME=${RPC_USERNAME:="transmission"}
+RPC_AUTH_REQUIRED=${RPC_AUTH_REQUIRED:="true"}
 
-echo "--> git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null"
-git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null
+############################################################
+# Main program                                             #
+############################################################
+function run() {
+    echo "--> $1"
+    $1
+}
 
-echo "--> cp -R /repo/nginx/** /etc/nginx/"
-cp -R /repo/nginx/** /etc/nginx/
+run "mkdir -p $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR"
 
-echo "--> cp -R /repo/fail2ban/ /etc/fail2ban/"
-cp -R /repo/fail2ban/ /etc/fail2ban/
+run "git clone --depth=1 https://github.com/kalibrado/servarr-dashboard $SERVARR_TMP_DIR"
 
-echo "--> cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
-cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+cd $SERVARR_TMP_DIR
+function nginx() {
+    run "cp -R ./nginx/ /etc/nginx/"
+    envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' <./nginx/init-nginx.conf >/etc/nginx/nginx.conf
+}
 
-echo "--> mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )"
-mkdir -p $SERVARR_LOG_DIR
-cd $SERVARR_LOG_DIR
-mkdir -p ./$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )
-cd -
+function transmission() {
+    run "mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
+    run "cp -R ./transmission/ $SERVARR_CONF_DIR/Transmission/"
+    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" <"./transmission/init-settings.json" >"$SERVARR_CONF_DIR/Transmission/settings.json"
+}
 
-echo "--> Setup /etc/nginx/nginx.conf"
-envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
+function supervisord() {
+    run "cp ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
+    cd $SERVARR_LOG_DIR
+    run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
+    cd -
+}
 
-echo "--> mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
-mkdir -p $SERVARR_CONF_DIR/Transmission "$TRANSMISSION_COMPLETED_DIR"  "$TRANSMISSION_INCOMPLETED_DIR"
+function fail2ban() {
+    run "cp -R ./fail2ban/ /etc/fail2ban/"
+}
 
-echo "--> cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
-cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/
+function Homer(){
+    run "cp -R ./assets/** $SERVARR_APP_DIR/Homer/assets" 
+    run "cp -R ./assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
+}
 
-echo "--> Setup Transmission/settings.json"
-envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
 
-echo "--> cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets"
-cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets/
-echo "--> cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
-cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
+Homer &
+nginx &
+transmission &
+supervisord &
+wait
 
-/usr/bin/supervisord &
-echo "--> sleep 30s"
+run "/usr/bin/supervisord"
 # sleep 30s
- #tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
+#tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
