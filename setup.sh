@@ -49,7 +49,7 @@ user_app=${USER:='root'}
 exec_type="full"
 Apps="all"
 packages=(
-    git fail2ban nano wget unzip curl apt-transport-https
+    git fail2ban nano wget unzip curl apt-transport-https gettext-base
     nginx nginx-extras sqlite3 mediainfo libchromaprint-tools 
     supervisor procps ca-certificates transmission-daemon 
     chromium chromium-common chromium-driver xvfb dumb-init 
