@@ -45,16 +45,17 @@ function run() {
 
 run "mkdir -p $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR"
 
-
 function nginx() {
     run "cp -R $SERVARR_TMP_DIR/repo/nginx/ /etc/nginx/"
-    envsubst "$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR" < $SERVARR_TMP_DIR/repo/nginx/init-nginx.conf > /etc/nginx/nginx.conf
+    run "mkdir -p $SERVARR_LOG_DIR/nginx"
+    envsubst "$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR" <$SERVARR_TMP_DIR/repo/nginx/init-nginx.conf >/etc/nginx/nginx.conf
 }
 
 function transmission() {
     run "mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
     run "cp -R $SERVARR_TMP_DIR/repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
-    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" < "$SERVARR_TMP_DIR/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
+    run "mkdir -p $SERVARR_LOG_DIR/Transmission"
+    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" <"$SERVARR_TMP_DIR/repo/transmission/init-settings.json" >"$SERVARR_CONF_DIR/Transmission/settings.json"
 }
 
 function fail2ban() {
@@ -72,10 +73,13 @@ transmission &
 wait
 
 run "cp $SERVARR_TMP_DIR/repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
-# cd $SERVARR_LOG_DIR
-# run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
-# cd -
 
-/usr/bin/supervisord &> /dev/null
-# sleep 30s
+run "mkdir -p $SERVARR_LOG_DIR/Prowlarr"
+run "mkdir -p $SERVARR_LOG_DIR/Radarr"
+run "mkdir -p $SERVARR_LOG_DIR/Sonarr"
+run "mkdir -p $SERVARR_LOG_DIR/Lidarr"
+run "mkdir -p $SERVARR_LOG_DIR/Readarr"
+
+/usr/bin/supervisord &>/dev/null
+run "sleep 10s"
 tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
