@@ -166,26 +166,30 @@ function Install_All() {
 function start() {
     echo "--> Create $SERVARR_APP_DIR"
     mkdir -p "$SERVARR_APP_DIR"
+
     echo "--> Update systeme"
     apt-get -qq update
+
     echo "--> Install packages ${packages[@]}"
-    apt-get -y -qq install "${packages[@]}"
-    echo "--> rm apt/lists/*"
-    rm -rf /var/lib/apt/lists/*
-    echo "--> Clean apt/lists"
-    apt-get -qq clean
+    apt-get -y install "${packages[@]}" 
+
     echo "--> Autoremove"
     apt-get -qq autoremove -y
+
     echo "--> Clone repo for last update"
     git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo
+
     echo "--> Copie config Nginx"
     cp -R /repo/nginx/ /etc/nginx/
+
     echo "--> Copie config fail2ban"
     cp -R /repo/fail2ban/ /etc/fail2ban/
+
     echo "--> Copie supervisord.conf"
     cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
     if [[ $Apps == "all" ]]; then
-        Install_All
+        Install_All 
     else
         apps=$(echo "$Apps" | tr '[:upper:]' '[:lower:]')
         export IFS=";"
@@ -193,6 +197,7 @@ function start() {
             $app
         done
     fi
+    
     echo "--> Remove repo"
     rm -rf /repo
 }
