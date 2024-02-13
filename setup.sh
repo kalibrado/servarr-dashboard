@@ -63,7 +63,6 @@ packages=(
 # Help                                                    #
 ############################################################
 Help() {
-    echo "--------------------------------------------------------------"
     echo "Using the installation script to automate Servarr-Dashboard"
     echo "Syntax: setup.sh [-t|a|h]"
     echo "options:"
@@ -77,7 +76,6 @@ Help() {
 # Main program                                             #
 ############################################################
 function __set_app() {
-    echo "--------------------------------------------------------------"
     app=${1^} # first char uppercase 
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
     echo "--> Create $SERVARR_LOG_DIR/$app_lowe"
@@ -90,7 +88,6 @@ function __set_app() {
     pkill -f "$SERVARR_APP_DIR/$app_lower/$app"
 }
 function __get_app() {
-    echo "--------------------------------------------------------------"
     app=${1^} # first char uppercase 
     url=$2
     extra=$3
@@ -113,7 +110,6 @@ function __get_app() {
     fi
 }
 function homer() {
-    echo "--------------------------------------------------------------"
     echo "--> Create $SERVARR_APP_DIR/homer"
     mkdir -p "$SERVARR_APP_DIR/homer"
     __get_app "homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip" --content-disposition "zipfile"
@@ -123,36 +119,29 @@ function homer() {
 
 }
 function flareSolverr() {
-    echo "--------------------------------------------------------------"
     __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" --content-disposition
 }
 function readarr() {
-    echo "--------------------------------------------------------------"
     __get_app "readarr" 'http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "readarr"
 }
 function radarr() {
-    echo "--------------------------------------------------------------"
     __get_app "radarr" 'http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "radarr"
 }
 function sonarr() {
-    echo "--------------------------------------------------------------"
     __get_app "sonarr" 'http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "sonarr"
 }
 function lidarr() {
-    echo "--------------------------------------------------------------"
     __get_app "lidarr" 'http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "lidarr"
 }
 function prowlarr() {
-    echo "--------------------------------------------------------------"
     __get_app "prowlarr" 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' --content-disposition
     __set_app "prowlarr"
 }
 function transmission() {
-    echo "--------------------------------------------------------------"
     echo "--> Create $TRANSMISSION_COMPLETED_DIR "
     mkdir -p "$TRANSMISSION_COMPLETED_DIR"
     echo "--> Create $TRANSMISSION_INCOMPLETED_DIR"
@@ -163,7 +152,6 @@ function transmission() {
     cp /repo/transmission/ $SERVARR_CONF_DIR/transmission/
 }
 function Install_All() {
-    echo "--------------------------------------------------------------"
     echo "--> Install all apps"
     prowlarr &
     readarr &
@@ -176,7 +164,6 @@ function Install_All() {
     wait
 }
 function start() {
-    echo "--------------------------------------------------------------"
     echo "--> Create $SERVARR_APP_DIR"
     mkdir -p "$SERVARR_APP_DIR"
     echo "--> Update systeme"
