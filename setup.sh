@@ -107,15 +107,15 @@ function fail2ban() {
 
 
 function Install_All() {
-    prowlarr &
-    readarr &
-    radarr &
-    sonarr &
-    lidarr &
-    Homer &
-    nginx &
-    transmission &
-    supervisord &
+    prowlarr 
+    readarr 
+    radarr 
+    sonarr 
+    lidarr 
+    Homer 
+    nginx 
+    transmission 
+    supervisord 
 }
 
 run "rm -rf $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR "
