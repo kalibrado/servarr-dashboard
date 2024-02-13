@@ -72,10 +72,10 @@ transmission &
 wait
 
 run "cp $SERVARR_TMP_DIR/repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
-cd $SERVARR_LOG_DIR
-run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
-cd -
+# cd $SERVARR_LOG_DIR
+# run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
+# cd -
 
-run "/usr/bin/supervisord"
+/usr/bin/supervisord &> /dev/null
 # sleep 30s
-#tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
+tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
