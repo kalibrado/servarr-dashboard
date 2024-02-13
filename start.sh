@@ -45,27 +45,27 @@ function run() {
 
 run "mkdir -p $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR"
 
-cd $SERVARR_TMP_DIR
-run "git clone --depth=1 https://github.com/kalibrado/servarr-dashboard repo"
+
+run "git clone --depth=1 https://github.com/kalibrado/servarr-dashboard $SERVARR_TMP_DIR/repo"
 
 function nginx() {
-    run "cp -R repo/nginx/ /etc/nginx/"
-    envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' <repo/nginx/init-nginx.conf >/etc/nginx/nginx.conf
+    run "cp -R $SERVARR_TMP_DIR/repo/nginx/ /etc/nginx/"
+    envsubst "$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR" < $SERVARR_TMP_DIR/repo/nginx/init-nginx.conf > /etc/nginx/nginx.conf
 }
 
 function transmission() {
     run "mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
-    run "cp -R repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
-    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" <"repo/transmission/init-settings.json" >"$SERVARR_CONF_DIR/Transmission/settings.json"
+    run "cp -R $SERVARR_TMP_DIR/repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
+    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" < "$SERVARR_TMP_DIR/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
 }
 
 function fail2ban() {
-    run "cp -R repo/fail2ban/ /etc/fail2ban/"
+    run "cp -R $SERVARR_TMP_DIR/repo/fail2ban/ /etc/fail2ban/"
 }
 
 function Homer() {
-    run "cp -R repo/assets/** $SERVARR_APP_DIR/Homer/assets"
-    run "cp -R repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
+    run "cp -R $SERVARR_TMP_DIR/repo/assets/** $SERVARR_APP_DIR/Homer/assets"
+    run "cp -R $SERVARR_TMP_DIR/repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
 }
 
 Homer &
@@ -73,7 +73,7 @@ nginx &
 transmission &
 wait
 
-run "cp repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
+run "cp $SERVARR_TMP_DIR/repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
 cd $SERVARR_LOG_DIR
 run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
 cd -

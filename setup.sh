@@ -19,6 +19,7 @@ cat <<EOF
 #-------------------------------------------------------------------------------------------------------------------------#
 EOF
 
+
 ############################################################
 # Variables                                                #
 ############################################################
@@ -43,17 +44,16 @@ function run() {
     echo "--> $1"
     $1
 }
+run "rm -rf $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR "
+
 function __get_app() {
-    cd "$SERVARR_TMP_DIR"
     app=${1^}
     url=$2
-    run "wget -q --no-check-certificate $url -O $app.tar.gz"
-    run "tar -xzf $app.tar.gz"
-    run "rm $app.tar.gz"
-    run "mv $app $SERVARR_APP_DIR/$app"
-    cd -
-    run "mkdir -p $SERVARR_LOG_DIR/$app"
-    run "$SERVARR_APP_DIR/$app/$app -nobrowser -data=$SERVARR_CONF_DIR/$app > /dev/null &" &
+    run "wget -q -P $SERVARR_TMP_DIR/ --content-disposition --no-check-certificate $url"
+    run "mkdir -p $SERVARR_APP_DIR/$app"
+    run "tar -xzf $SERVARR_TMP_DIR/$app*.tar.gz -C  $SERVARR_APP_DIR/"
+    run "rm $SERVARR_TMP_DIR/$app*.tar.gz"
+    $SERVARR_APP_DIR/$app/$app -nobrowser -data=$SERVARR_CONF_DIR/$app >/dev/null &  
     sleep 20s
     run "sed -i s|<UrlBase></UrlBase>|<UrlBase>/$app</UrlBase>|g $SERVARR_CONF_DIR/$app/config.xml"
     run "pkill -f $SERVARR_APP_DIR/$app/$app"
@@ -74,35 +74,33 @@ function prowlarr() {
     __get_app "Prowlarr" "http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
 }
 function Homer() {
-    cd "$SERVARR_TMP_DIR"
-    run "wget -q --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip"
+    run "wget -q -P $SERVARR_TMP_DIR/ --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip"
     run "mkdir -p $SERVARR_APP_DIR/Homer"
-    run "unzip -qq homer.zip -d $SERVARR_APP_DIR/Homer"
-    cd -
-    run "cp -R assets/** $SERVARR_APP_DIR/Homer/assets"
-    run "cp -R assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
+    run "unzip -qq $SERVARR_TMP_DIR/homer.zip -d $SERVARR_APP_DIR/Homer"
+    run "cp -R $SERVARR_TMP_DIR/repo/assets/ $SERVARR_APP_DIR/Homer/assets"
+    run "cp -R $SERVARR_TMP_DIR/repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
 }
 
 function nginx() {
-    run "cp -R nginx/ /etc/nginx/"
-    envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' <nginx/init-nginx.conf >/etc/nginx/nginx.conf
+    run "cp -R $SERVARR_TMP_DIR/repo/nginx/ /etc/nginx/"
+    envsubst "$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR" < "$SERVARR_TMP_DIR/repo/nginx/init-nginx.conf" > /etc/nginx/nginx.conf
 }
 
 function transmission() {
     run "mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
-    run "cp -R transmission/ $SERVARR_CONF_DIR/Transmission/"
-    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" <"transmission/init-settings.json" >"$SERVARR_CONF_DIR/Transmission/settings.json"
+    run "cp -R $SERVARR_TMP_DIR/repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
+    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" < "$SERVARR_TMP_DIR/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
 }
 
 function supervisord() {
-    run "cp supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
+    run "cp $SERVARR_TMP_DIR/repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
     cd $SERVARR_LOG_DIR
     run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
     cd -
 }
 
 function fail2ban() {
-    run "cp -R fail2ban/ /etc/fail2ban/"
+    run "cp -R $SERVARR_TMP_DIR/repo/fail2ban/ /etc/fail2ban/"
 }
 
 function Install_All() {
@@ -117,14 +115,14 @@ function Install_All() {
     supervisord &
 }
 
-run "rm -rf $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR "
 run "mkdir -p $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR"
 run "apt-get -qq update"
 run "apt-get -y -qq install ${packages} --no-install-recommends"
 run "rm -rf /var/lib/apt/lists/*"
 run "apt-get -qq clean"
 run "apt-get -qq autoremove -y"
+git clone --depth=1 https://github.com/kalibrado/servarr-dashboard $SERVARR_TMP_DIR/repo  &> /dev/null
+
 Install_All
 wait
-
 run "pkill -f $SERVARR_APP_DIR"
