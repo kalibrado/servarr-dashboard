@@ -42,74 +42,80 @@ packages=(
 ############################################################
 # Main program                                             #
 ############################################################
-function __set_app() {
-    app=$1
-    echo "--> Create $SERVARR_LOG_DIR/$app"
+
+function __get_app() {
+    app=${1^}
+    url=$2
+    echo "--> wget -q --no-check-certificate $url -O $app.tar.gz"
+    wget -q --no-check-certificate $url -O $app.tar.gz
+    echo "--> tar -xzf $app.tar.gz"
+    tar -xzf $app.tar.gz
+    echo "--> rm $app.tar.gz"
+    rm $app.tar.gz
+    echo "--> mv $app $SERVARR_APP_DIR/$app"
+    mv $app $SERVARR_APP_DIR/$app
+    echo "--> mkdir -p $SERVARR_LOG_DIR/$app"
     mkdir -p "$SERVARR_LOG_DIR/$app"
-    echo "--> Autorisation $app in $SERVARR_APP_DIR/$app"
-    chown "$user_app":"$user_app" -R "$SERVARR_APP_DIR/$app"
     "$SERVARR_APP_DIR/$app/$app" -nobrowser -data="$SERVARR_CONF_DIR/$app" >/dev/null &
-    sleep 5s
+    sleep 10s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app</UrlBase>|g" "$SERVARR_CONF_DIR/$app/config.xml"
     pkill -f "$SERVARR_APP_DIR/$app/$app"
-}
-function __get_app() {
-    app=$1
-    url=$2
-    echo "--> Donwload $app "
-    wget -q --no-check-certificate $url -O $app.tar.gz
-    echo "--> Extract $app.tar.gz"
-    tar -xzf $app.tar.gz
-    echo "--> Delete $app.tar.gz"
-    rm $app.tar.gz
-    echo "--> Move $app $SERVARR_APP_DIR/${app^}"
-    mv $app $SERVARR_APP_DIR/${app^}
-}
-function flareSolverr() {
-    __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" 
 }
 
 function readarr() {
     __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64"
-    __set_app "Readarr"
 }
 function radarr() {
     __get_app "Radarr" "http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
-    __set_app "Radarr"
 }
 function sonarr() {
     __get_app "Sonarr" "http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64"
-    __set_app "Sonarr"
 }
 function lidarr() {
     __get_app "Lidarr" "http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
-    __set_app "Lidarr"
 }
 function prowlarr() {
     __get_app "Prowlarr" "http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
-    __set_app "Prowlarr"
+}
+
+function Homer(){
+    echo "--> wget -q --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip"
+    wget -q --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip
+    echo "--> unzip homer.zip -d  $SERVARR_APP_DIR/Homer"
+    unzip homer.zip -d  $SERVARR_APP_DIR/Homer
+}
+function flareSolverr() {
+    app="flaresolverr"  
+    echo "--> wget -q --no-check-certificate https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz"
+    wget -q --no-check-certificate https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz
+    echo "--> tar -xzf $app.tar.gz"
+    tar -xzf $app.tar.gz
+    echo "--> rm $app.tar.gz"
+    rm $app.tar.gz
+    echo "--> mv $app $SERVARR_APP_DIR/${app^}"
+    mv $app $SERVARR_APP_DIR/${app^}
 }
 
 function Install_All() {
-    echo "--> Install all apps"
     prowlarr &
     readarr &
     radarr &
     sonarr &
     lidarr &
     flareSolverr &
-    wait
+    Homer &
 }
 
-echo "--> Create $SERVARR_APP_DIR"
+echo "--> mkdir -p $SERVARR_APP_DIR"
 mkdir -p "$SERVARR_APP_DIR"
 
-echo "--> Update systeme"
+echo "--> apt-get -qq update"
 apt-get -qq update
 
-echo "--> Install packages ${packages[@]}"
+echo "--> apt-get -y  -qq install ${packages[@]} --no-install-recommends"
 apt-get -y -qq install "${packages[@]}" --no-install-recommends
 
-echo "--> Autoremove"
+echo "--> apt-get -qq autoremove -y"
 apt-get -qq autoremove -y
 Install_All 
+wait

@@ -44,67 +44,45 @@ cat <<EOF
 #-------------------------------------------------------------------------------------------------------------------------#
 EOF
 
-
-echo "--> Clone repo for last update"
-git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null
-
-echo "--> Copie config Nginx"
-cp -R /repo/nginx/ /etc/nginx/
-
-echo "--> Copie config fail2ban"
-cp -R /repo/fail2ban/ /etc/fail2ban/
-
-echo "--> Copie supervisord.conf"
-cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-echo "--> Create $SERVARR_APP_DIR"
+echo "--> mkdir -p $SERVARR_APP_DIR"
 mkdir -p $SERVARR_APP_DIR
-echo "--> Create $SERVARR_CONF_DIR"
+
+echo "--> mkdir -p $SERVARR_CONF_DIR"
 mkdir -p $SERVARR_CONF_DIR
 
-echo "--> Create $SERVARR_LOG_DIR"
-mkdir -p $SERVARR_LOG_DIR
-echo "--> Create $SERVARR_LOG_DIR/Prowlarr"
-mkdir -p $SERVARR_LOG_DIR/Prowlarr 
-echo "--> Create $SERVARR_LOG_DIR/Radarr"
-mkdir -p $SERVARR_LOG_DIR/Radarr 
-echo "--> Create $SERVARR_LOG_DIR/Sonarr"
-mkdir -p $SERVARR_LOG_DIR/Sonarr
-echo "--> Create $SERVARR_LOG_DIR/Lidarr"
-mkdir -p $SERVARR_LOG_DIR/Lidarr
-echo "--> Create $SERVARR_LOG_DIR/Readarr"
-mkdir -p $SERVARR_LOG_DIR/Readarr
-echo "--> Create $SERVARR_LOG_DIR/Transmission"
-mkdir -p $SERVARR_LOG_DIR/Transmission
-echo "--> Create $SERVARR_LOG_DIR/nginx"
-mkdir -p $SERVARR_LOG_DIR/nginx
-echo "--> Create $SERVARR_LOG_DIR/flaresolverr"
-mkdir -p $SERVARR_LOG_DIR/flaresolverr
+echo "--> git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null"
+git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null
 
-echo "--> Copie nginx conf.d  /etc/nginx/"
-cp -R /repo/nginx/** /etc/nginx/
-echo "--> Update Nginx conf"
+echo "--> cp -R /repo/nginx/ /etc/nginx/"
+cp -R /repo/nginx/ /etc/nginx/
+
+echo "--> cp -R /repo/fail2ban/ /etc/fail2ban/"
+cp -R /repo/fail2ban/ /etc/fail2ban/
+
+echo "--> cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
+cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+echo "--> mkdir -p $SERVARR_LOG_DIR/$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )"
+mkdir -p $SERVARR_LOG_DIR/$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )
+
+echo "--> envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf"
 envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
 
-echo "--> Setup settings transmission"
-echo "--> Create $SERVARR_CONF_DIR/Transmission"
-mkdir -p $SERVARR_CONF_DIR/Transmission
-echo "--> Create $TRANSMISSION_COMPLETED_DIR "
-mkdir -p "$TRANSMISSION_COMPLETED_DIR"
-echo "--> Create $TRANSMISSION_INCOMPLETED_DIR"
-mkdir -p "$TRANSMISSION_INCOMPLETED_DIR"
-echo "--> Copie transmission config"
-cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/
-envsubst '$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD' < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
+echo "--> mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
+mkdir -p $SERVARR_CONF_DIR/Transmission "$TRANSMISSION_COMPLETED_DIR"  "$TRANSMISSION_INCOMPLETED_DIR"
 
-echo "--> Donwload Homer dashboard"
-wget -q --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip
-echo "--> Unzip homer.zip in $SERVARR_APP_DIR/Homer"
-unzip homer.zip -d  $SERVARR_APP_DIR/Homer
-echo "--> Copie assets  $SERVARR_APP_DIR/Homer/assets/"
+echo "--> cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
+cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/
+
+echo "--> envsubst $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD < /repo/transmission/init-settings.json > $SERVARR_CONF_DIR/Transmission/settings.json"
+envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
+
+echo "--> cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets"
 cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets/
+echo "--> cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
 cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
 
 /usr/bin/supervisord &
-sleep 10s
+echo "--> sleep 30s"
+sleep 30s
 tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
