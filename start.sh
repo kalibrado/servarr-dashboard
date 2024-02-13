@@ -75,5 +75,5 @@ cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
 
 /usr/bin/supervisord &
 echo "--> sleep 30s"
-sleep 30s
-tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
+# sleep 30s
+ #tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"
