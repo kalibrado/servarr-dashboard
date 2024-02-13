@@ -53,8 +53,8 @@ mkdir -p $SERVARR_CONF_DIR
 echo "--> git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null"
 git clone --depth=1 https://github.com/kalibrado/servarr-dashboard /repo >/dev/null
 
-echo "--> cp -R /repo/nginx/ /etc/nginx/"
-cp -R /repo/nginx/ /etc/nginx/
+echo "--> cp -R /repo/nginx/** /etc/nginx/"
+cp -R /repo/nginx/** /etc/nginx/
 
 echo "--> cp -R /repo/fail2ban/ /etc/fail2ban/"
 cp -R /repo/fail2ban/ /etc/fail2ban/
@@ -65,7 +65,7 @@ cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 echo "--> mkdir -p $SERVARR_LOG_DIR/$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )"
 mkdir -p $SERVARR_LOG_DIR/$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )
 
-echo "--> envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf"
+echo "--> Setup /etc/nginx/nginx.conf"
 envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
 
 echo "--> mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
@@ -74,7 +74,7 @@ mkdir -p $SERVARR_CONF_DIR/Transmission "$TRANSMISSION_COMPLETED_DIR"  "$TRANSMI
 echo "--> cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
 cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/
 
-echo "--> envsubst $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD < /repo/transmission/init-settings.json > $SERVARR_CONF_DIR/Transmission/settings.json"
+echo "--> Setup Transmission/settings.json"
 envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
 
 echo "--> cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets"

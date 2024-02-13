@@ -36,8 +36,7 @@ user_app=${USER:="root"}
 packages=(
     git fail2ban nano wget unzip curl apt-transport-https gettext-base
     nginx nginx-extras sqlite3 mediainfo libchromaprint-tools 
-    supervisor procps ca-certificates transmission-daemon 
-    chromium chromium-common chromium-driver xvfb dumb-init 
+    supervisor procps ca-certificates transmission-daemon
 )
 ############################################################
 # Main program                                             #
@@ -61,7 +60,6 @@ function __get_app() {
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app</UrlBase>|g" "$SERVARR_CONF_DIR/$app/config.xml"
     pkill -f "$SERVARR_APP_DIR/$app/$app"
 }
-
 function readarr() {
     __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64"
 }
@@ -77,32 +75,18 @@ function lidarr() {
 function prowlarr() {
     __get_app "Prowlarr" "http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
 }
-
 function Homer(){
     echo "--> wget -q --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip"
     wget -q --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip
-    echo "--> unzip homer.zip -d  $SERVARR_APP_DIR/Homer"
-    unzip homer.zip -d  $SERVARR_APP_DIR/Homer
+    echo "--> unzip -qq homer.zip -d  $SERVARR_APP_DIR/Homer"
+    unzip -qq homer.zip -d  $SERVARR_APP_DIR/Homer
 }
-function flareSolverr() {
-    app="flaresolverr"  
-    echo "--> wget -q --no-check-certificate https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz"
-    wget -q --no-check-certificate https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz
-    echo "--> tar -xzf $app.tar.gz"
-    tar -xzf $app.tar.gz
-    echo "--> rm $app.tar.gz"
-    rm $app.tar.gz
-    echo "--> mv $app $SERVARR_APP_DIR/${app^}"
-    mv $app $SERVARR_APP_DIR/${app^}
-}
-
 function Install_All() {
     prowlarr &
     readarr &
     radarr &
     sonarr &
     lidarr &
-    flareSolverr &
     Homer &
 }
 
