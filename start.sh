@@ -105,6 +105,6 @@ echo "--> Copie assets  $SERVARR_APP_DIR/Homer/assets/"
 cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets/
 cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico
 
-/usr/bin/supervisord >/dev/null &
+/usr/bin/supervisord &
 
-tail -f $SERVARR_LOG_DIR/**/*.log
+tail -f $SERVARR_LOG_DIR/**/*.log || echo "tail -f $SERVARR_LOG_DIR/**/*.log  did not complete successfully"

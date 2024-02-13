@@ -49,7 +49,7 @@ function __set_app() {
     echo "--> Autorisation $app in $SERVARR_APP_DIR/$app"
     chown "$user_app":"$user_app" -R "$SERVARR_APP_DIR/$app"
     "$SERVARR_APP_DIR/$app/$app" -nobrowser -data="$SERVARR_CONF_DIR/$app" >/dev/null &
-    sleep 10s
+    sleep 5s
     sed -i "s|<UrlBase></UrlBase>|<UrlBase>/$app</UrlBase>|g" "$SERVARR_CONF_DIR/$app/config.xml"
     pkill -f "$SERVARR_APP_DIR/$app/$app"
 }
@@ -58,36 +58,36 @@ function __get_app() {
     url=$2
     extra=$3
     echo "--> Donwload $app "
-    wget -q --no-check-certificate "$extra" "$url" >/dev/null
-    echo "--> Extract $app*.tar.gz"
-    tar -xzf $app*.tar.gz
-    echo "--> Delete $app*.tar.gz"
-    rm "$app"*.tar.gz
+    wget -q --no-check-certificate $url -O $app.tar.gz
+    echo "--> Extract $app.tar.gz"
+    tar -xzf $app.tar.gz
+    echo "--> Delete $app.tar.gz"
+    rm $app.tar.gz
     echo "--> Move $app $SERVARR_APP_DIR/$app"
-    mv "$app" "$SERVARR_APP_DIR/$app"
+    mv $app $SERVARR_APP_DIR/$app
 }
 function flareSolverr() {
-    __get_app "Flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz -O Flaresolverr.tar.gz"
+    __get_app "Flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" 
 }
 
 function readarr() {
-    __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
+    __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64"
     __set_app "Readarr"
 }
 function radarr() {
-    __get_app "Radarr" "http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
+    __get_app "Radarr" "http://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
     __set_app "Radarr"
 }
 function sonarr() {
-    __get_app "Sonarr" "http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64" --content-disposition
+    __get_app "Sonarr" "http://services.sonarr.tv/v1/download/master/latest?version=4&os=linux&runtime=netcore&arch=x64"
     __set_app "Sonarr"
 }
 function lidarr() {
-    __get_app "Lidarr" "http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
+    __get_app "Lidarr" "http://lidarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
     __set_app "Lidarr"
 }
 function prowlarr() {
-    __get_app "Prowlarr" "http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
+    __get_app "Prowlarr" "http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
     __set_app "Prowlarr"
 }
 
