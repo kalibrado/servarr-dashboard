@@ -46,8 +46,6 @@ function run() {
 run "mkdir -p $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR"
 
 
-run "git clone --depth=1 https://github.com/kalibrado/servarr-dashboard $SERVARR_TMP_DIR/repo"
-
 function nginx() {
     run "cp -R $SERVARR_TMP_DIR/repo/nginx/ /etc/nginx/"
     envsubst "$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR" < $SERVARR_TMP_DIR/repo/nginx/init-nginx.conf > /etc/nginx/nginx.conf
