@@ -63,11 +63,11 @@ function __get_app() {
     tar -xzf $app.tar.gz
     echo "--> Delete $app.tar.gz"
     rm $app.tar.gz
-    echo "--> Move $app $SERVARR_APP_DIR/$app"
-    mv $app $SERVARR_APP_DIR/$app
+    echo "--> Move $app $SERVARR_APP_DIR/${app^}"
+    mv $app $SERVARR_APP_DIR/${app^}
 }
 function flareSolverr() {
-    __get_app "Flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" 
+    __get_app "flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz" 
 }
 
 function readarr() {
