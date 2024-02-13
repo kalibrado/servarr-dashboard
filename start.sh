@@ -50,8 +50,11 @@ cp -R /repo/fail2ban/ /etc/fail2ban/
 echo "--> cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
 cp /repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-echo "--> mkdir -p $SERVARR_LOG_DIR/$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )"
-mkdir -p $SERVARR_LOG_DIR/$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )
+echo "--> mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )"
+mkdir -p $SERVARR_LOG_DIR
+cd $SERVARR_LOG_DIR
+mkdir -p ./$(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2 )
+cd -
 
 echo "--> Setup /etc/nginx/nginx.conf"
 envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
