@@ -65,8 +65,10 @@ mkdir -p $SERVARR_LOG_DIR/nginx
 echo "--> Create $SERVARR_LOG_DIR/flaresolverr"
 mkdir -p $SERVARR_LOG_DIR/flaresolverr
 
+echo "--> Copie nginx conf.d  /etc/nginx/"
+cp -R /repo/nginx/** /etc/nginx/
 echo "--> Update Nginx conf"
-envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /repo/nginx/init-nginx.conf > /etc/nginx/nginx.conf
+envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' < /etc/nginx/init-nginx.conf > /etc/nginx/nginx.conf
 
 echo "--> Setup settings transmission"
 echo "--> Create $SERVARR_CONF_DIR/transmission"
