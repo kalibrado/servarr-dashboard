@@ -137,7 +137,7 @@ function start() {
     apt-get -qq update
 
     echo "--> Install packages ${packages[@]}"
-    apt-get -y install "${packages[@]}" --no-install-recommends
+    apt-get -y -qq install "${packages[@]}" --no-install-recommends
 
     echo "--> Autoremove"
     apt-get -qq autoremove -y
