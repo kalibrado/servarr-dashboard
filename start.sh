@@ -45,42 +45,38 @@ function run() {
 
 run "mkdir -p $SERVARR_APP_DIR $SERVARR_CONF_DIR $SERVARR_LOG_DIR $SERVARR_TMP_DIR"
 
-run "git clone --depth=1 https://github.com/kalibrado/servarr-dashboard $SERVARR_TMP_DIR"
-
 cd $SERVARR_TMP_DIR
+run "git clone --depth=1 https://github.com/kalibrado/servarr-dashboard repo"
+
 function nginx() {
-    run "cp -R ./nginx/ /etc/nginx/"
-    envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' <./nginx/init-nginx.conf >/etc/nginx/nginx.conf
+    run "cp -R repo/nginx/ /etc/nginx/"
+    envsubst '$SERVARR_THEME $SERVARR_APP_DIR $SERVARR_LOG_DIR' <repo/nginx/init-nginx.conf >/etc/nginx/nginx.conf
 }
 
 function transmission() {
     run "mkdir -p $SERVARR_CONF_DIR/Transmission $TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR"
-    run "cp -R ./transmission/ $SERVARR_CONF_DIR/Transmission/"
-    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" <"./transmission/init-settings.json" >"$SERVARR_CONF_DIR/Transmission/settings.json"
-}
-
-function supervisord() {
-    run "cp ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
-    cd $SERVARR_LOG_DIR
-    run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
-    cd -
+    run "cp -R repo/transmission/ $SERVARR_CONF_DIR/Transmission/"
+    envsubst "$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD" <"repo/transmission/init-settings.json" >"$SERVARR_CONF_DIR/Transmission/settings.json"
 }
 
 function fail2ban() {
-    run "cp -R ./fail2ban/ /etc/fail2ban/"
+    run "cp -R repo/fail2ban/ /etc/fail2ban/"
 }
 
-function Homer(){
-    run "cp -R ./assets/** $SERVARR_APP_DIR/Homer/assets" 
-    run "cp -R ./assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
+function Homer() {
+    run "cp -R repo/assets/** $SERVARR_APP_DIR/Homer/assets"
+    run "cp -R repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico"
 }
-
 
 Homer &
 nginx &
 transmission &
-supervisord &
 wait
+
+run "cp repo/supervisord.conf /etc/supervisor/conf.d/supervisord.conf"
+cd $SERVARR_LOG_DIR
+run "mkdir -p $(cat /etc/supervisor/conf.d/supervisord.conf | grep logfile | cut -d "/" -f 2)"
+cd -
 
 run "/usr/bin/supervisord"
 # sleep 30s
