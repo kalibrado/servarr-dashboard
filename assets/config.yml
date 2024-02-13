@@ -60,30 +60,30 @@ services:
     items:
       - name: "Prowlarr"
         logo: "/assets/prowlarr.png"
-        url: "/Prowlarr"
+        url: "/prowlarr"
         target: "_blank"
 
       - name: "Radarr"
         logo: "/assets/radarr.png"
-        url: "/Radarr"
+        url: "/radarr"
         target: "_blank"
 
       - name: "Sonarr"
         logo: "/assets/sonarr.png"
-        url: "/Sonarr"
+        url: "/sonarr"
         target: "_blank"
 
       - name: "Lidarr"
         logo: "/assets/lidarr.png"
-        url: "/Lidarr"
+        url: "/lidarr"
         target: "_blank"
 
       - name: "Readarr"
         logo: "/assets/readarr.png"
-        url: "/Readarr"
+        url: "/readarr"
         target: "_blank"
 
       - name: "Transmission"
         logo: "/assets/transmission.png"
-        url: "/Transmission"
+        url: "/transmission"
         target: "_blank"

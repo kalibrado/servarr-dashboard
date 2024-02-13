@@ -56,8 +56,9 @@ function __get_app() {
     run "mkdir -p $SERVARR_LOG_DIR/$app"
     $SERVARR_APP_DIR/$app/$app -nobrowser -data=$SERVARR_CONF_DIR/$app >/dev/null &  
     sleep 20s
-    run "sed -i s|<UrlBase></UrlBase>|<UrlBase>/$app</UrlBase>|g $SERVARR_CONF_DIR/$app/config.xml"
     run "pkill -f $SERVARR_APP_DIR/$app/$app"
+    lower=$(echo $app | tr '[:upper:]' '[:lower:]')
+    run "sed -i s|<UrlBase></UrlBase>|<UrlBase>/$lower</UrlBase>|g $SERVARR_CONF_DIR/$app/config.xml"
 }
 function readarr() {
     __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64"
