@@ -74,7 +74,7 @@ function __get_app() {
     typefile=$4
     app_lower=$(echo "$app" | tr "[:upper:]" "[:lower:]")
     echo "--> Donwload $app "
-    wget -q --show-progress --no-check-certificate "$extra" "$url"
+    wget -q --show-progress --no-check-certificate "$extra" "$url" >/dev/null
     if [[ "$typefile" == "zipfile" ]]; then
         echo "--> Extract zip file $app_lower.zip in $SERVARR_APP_DIR/$app_lower"
         unzip -qqo "$app_lower".zip -d "$SERVARR_APP_DIR/$app_lower"
