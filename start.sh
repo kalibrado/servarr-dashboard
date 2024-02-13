@@ -97,8 +97,10 @@ echo "--> Copie transmission config"
 cp -R /repo/transmission/ $SERVARR_CONF_DIR/Transmission/
 envsubst '$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD' < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/Transmission/settings.json"
 
-echo "--> Create $SERVARR_APP_DIR/Homer"
-mkdir -p "$SERVARR_APP_DIR/Homer"
+echo "--> Donwload Homer dashboard"
+wget --no-check-certificate https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip
+echo "--> Unzip homer.zip in $SERVARR_APP_DIR/Homer"
+unzip homer.zip -d  $SERVARR_APP_DIR/Homer
 echo "--> Copie assets  $SERVARR_APP_DIR/Homer/assets/"
 cp -R /repo/assets/** $SERVARR_APP_DIR/Homer/assets/
 cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/Homer/assets/icons/favicon.ico

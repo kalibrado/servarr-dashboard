@@ -57,31 +57,19 @@ function __get_app() {
     app=$1
     url=$2
     extra=$3
-
     echo "--> Donwload $app "
     wget -q --no-check-certificate "$extra" "$url" >/dev/null
-    if [[ "$app" == "Homer" ]]; then
-        echo "--> Extract zip file $app.zip in $SERVARR_APP_DIR/$app"
-        unzip -qqo $app.zip -d "$SERVARR_APP_DIR/$app"
-        echo "--> Delete $app.zip"
-        rm "$app".zip
-    else
-        echo "--> Extract $app*.tar.gz"
-        tar -xzf $app*.tar.gz
-        echo "--> Delete $app*.tar.gz"
-        rm "$app"*.tar.gz
-        echo "--> Move $app $SERVARR_APP_DIR/$app"
-        mv "$app" "$SERVARR_APP_DIR/$app"
-    fi
+    echo "--> Extract $app*.tar.gz"
+    tar -xzf $app*.tar.gz
+    echo "--> Delete $app*.tar.gz"
+    rm "$app"*.tar.gz
+    echo "--> Move $app $SERVARR_APP_DIR/$app"
+    mv "$app" "$SERVARR_APP_DIR/$app"
 }
 function flareSolverr() {
     __get_app "Flaresolverr" "https://github.com/FlareSolverr/FlareSolverr/releases/download/$FLARESOLVERR_VERSION/flaresolverr_linux_x64.tar.gz -O Flaresolverr.tar.gz"
 }
-function homer() {
-    echo "--> Create $SERVARR_APP_DIR/homer"
-    mkdir -p "$SERVARR_APP_DIR/homer"
-    __get_app "Homer" "https://github.com/bastienwirtz/homer/releases/latest/download/homer.zip -O Homer.zip"
-}
+
 function readarr() {
     __get_app "Readarr" "http://readarr.servarr.com/v1/update/develop/updatefile?os=linux&runtime=netcore&arch=x64" --content-disposition
     __set_app "Readarr"
@@ -110,7 +98,6 @@ function Install_All() {
     radarr &
     sonarr &
     lidarr &
-    homer &
     flareSolverr &
     wait
 }
