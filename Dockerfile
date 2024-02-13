@@ -1,12 +1,10 @@
 FROM debian
 
-
 ENV WORKDIR="/servarr-dashboard"
 ENV SERVARR_APP_DIR="$WORKDIR/app"
 ENV SERVARR_CONF_DIR="$WORKDIR/config"
 ENV SERVARR_LOG_DIR="$WORKDIR/log"
 ENV SERVARR_THEME="overseerr"
-
 ENV TRANSMISSION_COMPLETED_DIR="/media/downloads/completed"
 ENV TRANSMISSION_INCOMPLETED_DIR="/media/downloads/incompleted"
 ENV RPC_PASSWORD="transmission"

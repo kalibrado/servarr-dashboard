@@ -54,14 +54,10 @@ user_app=${USER:='root'}
 exec_type="full"
 Apps="all"
 packages=(
-    git fail2ban apt-utils
-    curl software-properties-common apt-transport-https
-    nano wget nginx
-    sqlite3 mediainfo libchromaprint-tools
-    nginx-extras supervisor procps
-    ca-certificates transmission-daemon unzip
-    gettext-base chromium chromium-common
-    chromium-driver xvfb dumb-init
+    git fail2ban curl software-properties-common apt-transport-https
+    nano wget nginx sqlite3 mediainfo libchromaprint-tools gettext-base
+    nginx-extras supervisor procps ca-certificates transmission-daemon 
+    chromium chromium-common chromium-driver xvfb dumb-init unzip
 )
 ############################################################
 # Help                                                    #
