@@ -7,7 +7,7 @@ TRANSMISSION_COMPLETED_DIR=${TRANSMISSION_COMPLETED_DIR:="/media/downloads/compl
 TRANSMISSION_INCOMPLETED_DIR=${TRANSMISSION_INCOMPLETED_DIR:="/media/downloads/incompleted"}
 RPC_PASSWORD=${RPC_PASSWORD:='transmission'}
 RPC_USERNAME=${RPC_USERNAME:='transmission'}
-RPC_AUTH_REQUIRED=${RPC_AUTH_REQUIRED:=true}
+RPC_AUTH_REQUIRED=${RPC_AUTH_REQUIRED:='true'}
 
 cat << EOF
 #-------------------------------------------------------------------------------------------------------------------------#
@@ -81,8 +81,7 @@ echo "--> Create $SERVARR_LOG_DIR/transmission"
 mkdir -p "$SERVARR_LOG_DIR/transmission"
 echo "--> Copie transmission config"
 cp -R /repo/transmission/ $SERVARR_CONF_DIR/transmission/
-path_file="$SERVARR_CONF_DIR/transmission"
-envsubst '$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD' < "/repo/transmission/init-settings.json" > "$path_file/settings.json"
+envsubst '$TRANSMISSION_COMPLETED_DIR $TRANSMISSION_INCOMPLETED_DIR $RPC_USERNAME $RPC_AUTH_REQUIRED $RPC_PASSWORD' < "/repo/transmission/init-settings.json" > "$SERVARR_CONF_DIR/transmission/settings.json"
 
 echo "--> Create $SERVARR_APP_DIR/homer"
 mkdir -p "$SERVARR_APP_DIR/homer"
@@ -90,5 +89,4 @@ echo "--> Copie assets  $SERVARR_APP_DIR/homer/assets/"
 cp -R /repo/assets/** $SERVARR_APP_DIR/homer/assets/
 cp -R /repo/assets/servarr.png $SERVARR_APP_DIR/homer/assets/icons/favicon.ico
 
-# Then run supervisord
 /usr/bin/supervisord
